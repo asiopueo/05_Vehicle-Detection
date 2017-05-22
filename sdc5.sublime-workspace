@@ -1,0 +1,380 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"prin",
+				"printStuff"
+			],
+			[
+				"colo",
+				"color_warp"
+			],
+			[
+				"binary",
+				"binaryWarped"
+			],
+			[
+				"im",
+				"imageWarper"
+			],
+			[
+				"binaryG",
+				"binaryGradx"
+			],
+			[
+				"binaryC",
+				"binaryComposite"
+			],
+			[
+				"imagre",
+				"image_bgr"
+			],
+			[
+				"image",
+				"imageRGB"
+			],
+			[
+				"sobe",
+				"sobelx"
+			],
+			[
+				"di",
+				"dir_binary"
+			],
+			[
+				"abs_sobel",
+				"abs_sobel_thresh"
+			],
+			[
+				"bina",
+				"binary_output"
+			],
+			[
+				"bin",
+				"binary_output"
+			],
+			[
+				"thre",
+				"thresh_min"
+			],
+			[
+				"cal",
+				"calibrateCamera"
+			],
+			[
+				"ob",
+				"objpoints"
+			],
+			[
+				"y_",
+				"y_train_aug"
+			],
+			[
+				"measu",
+				"measurements_flipped"
+			],
+			[
+				"meas",
+				"measurement_flipped"
+			],
+			[
+				"kernel",
+				"kernel_size"
+			],
+			[
+				"right",
+				"right_bottom"
+			],
+			[
+				"left",
+				"left_bottom"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "main.py",
+			"settings":
+			{
+				"buffer_size": 223,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "sliding_window.py",
+			"settings":
+			{
+				"buffer_size": 0,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 392.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 392.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/home/martin/workspace/sdc/05_Vehicle-Detection/main.py",
+		"/home/martin/workspace/sdc/04_Advanced-Lane-Lines/sdc4.sublime-workspace",
+		"/home/martin/workspace/sdc/04_Advanced-Lane-Lines/main.py",
+		"/home/martin/workspace/sdc/04_Advanced-Lane-Lines/sdc4.sublime-project",
+		"/home/martin/workspace/sdc/04_Advanced-Lane-Lines/composite.py",
+		"/home/martin/workspace/elGamal/main.py",
+		"/home/martin/workspace/sdc/04_Advanced-Lane-Lines/video.py",
+		"/home/martin/workspace/sdc/01_Lane-Lines/Lane_Detection.py",
+		"/home/martin/workspace/sdc/04_Advanced-Lane-Lines/line.py",
+		"/home/martin/workspace/sdc/04_Advanced-Lane-Lines/calibration.py",
+		"/home/martin/workspace/sdc/04_Advanced-Lane-Lines/histogram.py",
+		"/home/martin/workspace/sdc/04_Advanced-Lane-Lines/gradients.py",
+		"/home/martin/workspace/sdc/04_Advanced-Lane-Lines/pipeline.py",
+		"/home/martin/workspace/sdc/04_Advanced-Lane-Lines/warped.png",
+		"/home/martin/workspace/sdc/04_Advanced-Lane-Lines/warp.py",
+		"/home/martin/workspace/sdc/04_Advanced-Lane-Lines/binary.py",
+		"/home/martin/workspace/sdc/04_Advanced-Lane-Lines/hls.py",
+		"/home/martin/workspace/sdc/04_Advanced-Lane-Lines/thresholds.py",
+		"/home/martin/workspace/sdc/04_Advanced-Lane-Lines/polyfit.py",
+		"/home/martin/workspace/sdc/04_Advanced-Lane-Lines/sliding_windows.py",
+		"/home/martin/workspace/sdc/04_Advanced-Lane-Lines/mag_thresh.py",
+		"/home/martin/workspace/sdc/01_Lane-Lines/video_test.py",
+		"/home/martin/workspace/sdc/04_Advanced-Lane-Lines/test2.py",
+		"/home/martin/workspace/sdc/04_Advanced-Lane-Lines/test.py",
+		"/home/martin/workspace/sdc/03_Behavioral-Cloning/data-dump/training.py",
+		"/home/martin/workspace/sdc/CarND-Advanced-Lane-Lines/calibration.py",
+		"/home/martin/workspace/sdc/CarND-Behavioral-Cloning-P3/drive.py",
+		"/home/martin/workspace/sdc/CarND-Advanced-Lane-Lines/test.py",
+		"/home/martin/workspace/sdc/CarND-Behavioral-Cloning-P3/data-dump/training.py",
+		"/home/martin/workspace/sdc/CarND-LaneLines-P1/Lane_Detection.py",
+		"/home/martin/workspace/sdc/CarND-Traffic-Sign-Classifier-Project/Traffic_Sign_Classifier.ipynb",
+		"/home/martin/workspace/sdc/CarND-Traffic-Sign-Classifier-Project/Traffic_Sign_Classifier.py",
+		"/home/martin/workspace/sdc/CarND-Behavioral-Cloning-P3/training.py",
+		"/home/martin/workspace/sdc/CarND-Behavioral-Cloning-P3/video.py",
+		"/home/martin/workspace/sdc/CarND-LaneLines-P1/test1.py",
+		"/home/martin/anaconda3/envs/sdc/lib/python3.6/site-packages/moviepy/audio/io/readers.py",
+		"/home/martin/workspace/sdc/CarND-LaneLines-P1/video_test.py",
+		"/home/martin/workspace/sdc/CarND-LaneLines-P1/test2.py",
+		"/home/martin/workspace/sdc/CarND-LaneLines-P1/exit-ramp.py",
+		"/home/martin/.bashrc",
+		"/home/martin/workspace/sdc/CarND-LaneLines-P1/writeup_template.md",
+		"/home/martin/workspace/sdc/CarND-LaneLines-P1/P1.ipynb",
+		"/home/martin/Downloads/start-tor-browser.desktop"
+	],
+	"find":
+	{
+		"height": 28.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"mini",
+			"print",
+			"peint",
+			"poly",
+			"right_fit",
+			"binary_warped",
+			", ",
+			"'.')\n",
+			"readim",
+			"lab",
+			"gray"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 1,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "main.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 223,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								176,
+								176
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "sliding_window.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 0,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 28.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "sdc5.sublime-project",
+	"replace":
+	{
+		"height": 52.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 150.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

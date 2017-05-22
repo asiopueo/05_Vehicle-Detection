@@ -1,9 +1,5 @@
-##Writeup Template
-###You can use this file as a template for your writeup if you want to submit it as a markdown file, but feel free to use some other method and submit a pdf if you prefer.
 
----
-
-**Vehicle Detection Project**
+#Vehicle Detection Project
 
 The goals / steps of this project are the following:
 
@@ -14,27 +10,11 @@ The goals / steps of this project are the following:
 * Run your pipeline on a video stream (start with the test_video.mp4 and later implement on full project_video.mp4) and create a heat map of recurring detections frame by frame to reject outliers and follow detected vehicles.
 * Estimate a bounding box for vehicles detected.
 
-[//]: # (Image References)
-[image1]: ./examples/car_not_car.png
-[image2]: ./examples/HOG_example.jpg
-[image3]: ./examples/sliding_windows.jpg
-[image4]: ./examples/sliding_window.jpg
-[image5]: ./examples/bboxes_and_heat.png
-[image6]: ./examples/labels_map.png
-[image7]: ./examples/output_bboxes.png
-[video1]: ./project_video.mp4
 
-## [Rubric](https://review.udacity.com/#!/rubrics/513/view) Points
-###Here I will consider the rubric points individually and describe how I addressed each point in my implementation.  
 
----
-###Writeup / README
 
-####1. Provide a Writeup / README that includes all the rubric points and how you addressed each one.  You can submit your writeup as markdown or pdf.  [Here](https://github.com/udacity/CarND-Vehicle-Detection/blob/master/writeup_template.md) is a template writeup for this project you can use as a guide and a starting point.  
 
-You're reading it!
-
-###Histogram of Oriented Gradients (HOG)
+##Histogram of Oriented Gradients (HOG)
 
 ####1. Explain how (and identify where in your code) you extracted HOG features from the training images.
 
@@ -42,14 +22,14 @@ The code for this step is contained in the first code cell of the IPython notebo
 
 I started by reading in all the `vehicle` and `non-vehicle` images.  Here is an example of one of each of the `vehicle` and `non-vehicle` classes:
 
-![alt text][image1]
+<img src="./examples/car_not_car.png" width="300">
 
 I then explored different color spaces and different `skimage.hog()` parameters (`orientations`, `pixels_per_cell`, and `cells_per_block`).  I grabbed random images from each of the two classes and displayed them to get a feel for what the `skimage.hog()` output looks like.
 
 Here is an example using the `YCrCb` color space and HOG parameters of `orientations=8`, `pixels_per_cell=(8, 8)` and `cells_per_block=(2, 2)`:
 
 
-![alt text][image2]
+<img src="./examples/HOG_example.jpg" width="300">
 
 ####2. Explain how you settled on your final choice of HOG parameters.
 
@@ -57,24 +37,49 @@ I tried various combinations of parameters and...
 
 ####3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
 
-I trained a linear SVM using...
+I used a linear Support Vector Machine from the scikit-learn package.
+Due to my relatively small machine, I chose to use the small sets of training data.  The data included about 4,000 labeled images.
 
-###Sliding Window Search
+The preprocessing is done in lines ?? to ??.  It involves a split into training and testing data with a train-to-test-ratio of about 0.2.  The test accuracy is about 0.??.
+
+A separate function called 'pipeline' contains the image processing pipeline.  It takes an image (in case of a video, a series of images) and the classifier and scaler as data.  While the image and classifier are clear, the scaler is used for...
+
+
+
+
+
+
+
+
+
+##Sliding Window Search
 
 ####1. Describe how (and identify where in your code) you implemented a sliding window search.  How did you decide what scales to search and how much to overlap windows?
 
-I decided to search random window positions at random scales all over the image and came up with this (ok just kidding I didn't actually ;):
+I decided to use three scales: 64x64px, 128x128px, and 256x256px.
 
-![alt text][image3]
+The smallest scale is used in a ribbon at the horizon which is located between and ??.
+
+The medium scale is located in a ribbon between and .
+
+And finally, the largest scale is located in a ribbon between ?? and ?? px.
+
+<img src="./examples/sliding_windows.jpg" width="300">
+
+Using the 'functions are also objects' in Python, I can easily read them out for tweaking purposes in the `imageProcessing()` function.
+
+
+
+
 
 ####2. Show some examples of test images to demonstrate how your pipeline is working.  What did you do to optimize the performance of your classifier?
 
 Ultimately I searched on two scales using YCrCb 3-channel HOG features plus spatially binned color and histograms of color in the feature vector, which provided a nice result.  Here are some example images:
 
-![alt text][image4]
+<img src="./examples/sliding_window.jpg" width="300">
 ---
 
-### Video Implementation
+## Video Implementation
 
 ####1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (somewhat wobbly or unstable bounding boxes are ok as long as you are identifying the vehicles most of the time with minimal false positives.)
 Here's a [link to my video result](./project_video.mp4)
@@ -86,21 +91,24 @@ I recorded the positions of positive detections in each frame of the video.  Fro
 
 Here's an example result showing the heatmap from a series of frames of video, the result of `scipy.ndimage.measurements.label()` and the bounding boxes then overlaid on the last frame of video:
 
-### Here are six frames and their corresponding heatmaps:
+Here are six frames and their corresponding heatmaps:
 
-![alt text][image5]
+<img src="./examples/bboxes_and_heat.png" width="300">
 
-### Here is the output of `scipy.ndimage.measurements.label()` on the integrated heatmap from all six frames:
-![alt text][image6]
+Here is the output of `scipy.ndimage.measurements.label()` on the integrated heatmap from all six frames:
+<img src="./examples/labels_map.png" width="300">
 
-### Here the resulting bounding boxes are drawn onto the last frame in the series:
-![alt text][image7]
+Here the resulting bounding boxes are drawn onto the last frame in the series:
+
+<img src="./examples/output_bboxes.png" width="300">
+
+The labels can be read out by `labels[1]` which gived us the 
 
 
 
 ---
 
-###Discussion
+##Discussion
 
 ####1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
 
