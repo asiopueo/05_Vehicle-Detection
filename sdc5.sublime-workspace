@@ -4,6 +4,38 @@
 		"selected_items":
 		[
 			[
+				"extra",
+				"extract_features"
+			],
+			[
+				"win",
+				"windows2"
+			],
+			[
+				"apply",
+				"apply_threshold"
+			],
+			[
+				"feat",
+				"feature_image"
+			],
+			[
+				"non",
+				"nonzeroy"
+			],
+			[
+				"nonzer",
+				"nonzerox"
+			],
+			[
+				"draw",
+				"draw_labeled_boxes"
+			],
+			[
+				"xy",
+				"xy_overlap"
+			],
+			[
 				"prin",
 				"printStuff"
 			],
@@ -96,10 +128,10 @@
 	"buffers":
 	[
 		{
-			"file": "main.py",
+			"file": "search_and_classify.py",
 			"settings":
 			{
-				"buffer_size": 223,
+				"buffer_size": 5583,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -108,7 +140,17 @@
 			"file": "sliding_window.py",
 			"settings":
 			{
-				"buffer_size": 0,
+				"buffer_size": 1744,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "main.py",
+			"settings":
+			{
+				"buffer_size": 5761,
+				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		}
@@ -145,6 +187,12 @@
 	},
 	"file_history":
 	[
+		"/home/martin/workspace/sdc/05_Vehicle-Detection/extract.py",
+		"/home/martin/workspace/sdc/05_Vehicle-Detection/labels.py",
+		"/home/martin/workspace/sdc/05_Vehicle-Detection/explore.py",
+		"/home/martin/workspace/sdc/05_Vehicle-Detection/combine.py",
+		"/home/martin/workspace/sdc/05_Vehicle-Detection/spatial_bin.py",
+		"/home/martin/workspace/sdc/05_Vehicle-Detection/hog.py",
 		"/home/martin/workspace/sdc/05_Vehicle-Detection/main.py",
 		"/home/martin/workspace/sdc/04_Advanced-Lane-Lines/sdc4.sublime-workspace",
 		"/home/martin/workspace/sdc/04_Advanced-Lane-Lines/main.py",
@@ -191,7 +239,7 @@
 	],
 	"find":
 	{
-		"height": 28.0
+		"height": 36.0
 	},
 	"find_in_files":
 	{
@@ -205,6 +253,16 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"extract_feat",
+			"color_space",
+			"get_ho",
+			"color_his",
+			"bin_sp",
+			"extrac",
+			"bin_",
+			"cell_per_block",
+			"measurement",
+			"time",
 			"mini",
 			"print",
 			"peint",
@@ -233,35 +291,36 @@
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 0,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "main.py",
+					"file": "search_and_classify.py",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 223,
+						"buffer_size": 5583,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								176,
-								176
+								2402,
+								2402
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/Python/Python.sublime-syntax"
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 1146.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 0,
 					"type": "text"
 				},
 				{
@@ -270,15 +329,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 0,
+						"buffer_size": 1744,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								679,
+								679
 							]
 						],
 						"settings":
@@ -286,10 +345,39 @@
 							"syntax": "Packages/Python/Python.sublime-syntax"
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 960.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "main.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5761,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1994,
+								1994
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 780.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
 					"type": "text"
 				}
 			]
