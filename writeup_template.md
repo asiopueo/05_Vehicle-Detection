@@ -44,6 +44,19 @@ The preprocessing is done in lines ?? to ??.  It involves a split into training 
 
 A separate function called 'pipeline' contains the image processing pipeline.  It takes an image (in case of a video, a series of images) and the classifier and scaler as data.  While the image and classifier are clear, the scaler is used for...
 
+The standard `__name__=='__main__'` function only 
+Depending on the command line arguments, one may choose between `-i` for image processing and `-v` for video processing, both options followed by the arguments for input files.
+
+Choosing the image processing option yields an output 
+
+The output can be by the two parameters
+```
+	height, width = (2, 1)
+```
+
+I took advantage of the Pythonesque feature of treating functions as objects and defined local variables by `pipeline.output`, where `output` is the name of an intermediate image.
+
+
 
 
 
@@ -74,15 +87,40 @@ Using the 'functions are also objects' in Python, I can easily read them out for
 
 ####2. Show some examples of test images to demonstrate how your pipeline is working.  What did you do to optimize the performance of your classifier?
 
+The pipeline is structured as follows:
+
 Ultimately I searched on two scales using YCrCb 3-channel HOG features plus spatially binned color and histograms of color in the feature vector, which provided a nice result.  Here are some example images:
 
 <img src="./examples/sliding_window.jpg" width="300">
+
+Architectually, I have defined a class `Settings` whose main purpose is to act as a struct for the parameters of the HOG classifier.
+
+
+
 ---
 
 ## Video Implementation
 
 ####1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (somewhat wobbly or unstable bounding boxes are ok as long as you are identifying the vehicles most of the time with minimal false positives.)
-Here's a [link to my video result](./project_video.mp4)
+
+As described above, choosing the command line option `-v`, followed by an input file name, utilizes us the pipeline to process video images.
+Since the pipeline in our version takes four arguments, I use the `lambda`-method to define a one-argument function 
+```
+	lambda frame: pipeline(frame, cls, X_scale, settings)
+```
+
+
+As output, I have made out of curiosity two different videos: One displaying cars with surrounding bounding boxes, and another one displaying the heat map.
+
+The first link provides the reader with the standard bounding boxes:
+
+Here's a [link to my video result](./boundingBoxVideo.mp4)
+
+The second link leads to the video with the heat signature:
+
+Here's a [link to my video result](./heatMapVideo.mp4)
+
+One can see that our method for detecting false positives works quite well.
 
 
 ####2. Describe how (and identify where in your code) you implemented some kind of filter for false positives and some method for combining overlapping bounding boxes.
@@ -113,4 +151,9 @@ The labels can be read out by `labels[1]` which gived us the
 ####1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
 
 Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.  
+
+I found the solution from the lectures rather unsatisfying, as there are too many arguments in the function.  This has certainly much to do with 
+
+Although I was able to make some improvements architectually, there is still plenty of room for cleanup and .  In particular, I the parameter object `settings` should not be passed as often from function to function.  This would require only a few hours of optimization.  However, this work will be postponed until later.
+
 

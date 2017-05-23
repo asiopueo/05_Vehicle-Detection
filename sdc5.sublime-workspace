@@ -4,6 +4,14 @@
 		"selected_items":
 		[
 			[
+				"heat",
+				"heatmap"
+			],
+			[
+				"img",
+				"img_features"
+			],
+			[
 				"extra",
 				"extract_features"
 			],
@@ -131,7 +139,7 @@
 			"file": "search_and_classify.py",
 			"settings":
 			{
-				"buffer_size": 5583,
+				"buffer_size": 4385,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -149,7 +157,7 @@
 			"file": "main.py",
 			"settings":
 			{
-				"buffer_size": 5761,
+				"buffer_size": 6088,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -239,7 +247,7 @@
 	],
 	"find":
 	{
-		"height": 36.0
+		"height": 38.0
 	},
 	"find_in_files":
 	{
@@ -253,6 +261,13 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"y_start",
+			"search",
+			"channel",
+			"np.copy",
+			"imagenp.copy",
+			"image",
+			"extrac",
 			"extract_feat",
 			"color_space",
 			"get_ho",
@@ -291,7 +306,7 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 2,
 			"sheets":
 			[
 				{
@@ -300,15 +315,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 5583,
+						"buffer_size": 4385,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2402,
-								2402
+								3934,
+								3934
 							]
 						],
 						"settings":
@@ -317,10 +332,10 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1146.0,
+						"translation.y": 1860.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 2,
 					"type": "text"
 				},
 				{
@@ -345,7 +360,7 @@
 							"syntax": "Packages/Python/Python.sublime-syntax"
 						},
 						"translation.x": 0.0,
-						"translation.y": 960.0,
+						"translation.y": 920.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 1,
@@ -357,15 +372,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 5761,
+						"buffer_size": 6088,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1994,
-								1994
+								2920,
+								2920
 							]
 						],
 						"settings":
@@ -374,10 +389,10 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 780.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 0,
 					"type": "text"
 				}
 			]

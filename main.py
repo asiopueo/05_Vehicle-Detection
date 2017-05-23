@@ -17,7 +17,7 @@ from sklearn.model_selection import train_test_split
 from sliding_window import *
 from search_and_classify import search_windows, extract_features
 
-#from moviepy.editor import VideoFileClip
+from moviepy.editor import VideoFileClip
 
 
 class Settings:
@@ -38,7 +38,7 @@ class Settings:
 
 def add_heat(heat, bbox_list):
 	for box in bbox_list:
-		heat[box[0][1]:box[1][1], box[0][0]:box[1][0]] += 1
+		heat[box[0][1]:box[1][1], box[0][0]:box[1][0]] += 50
 	return heat
 
 
@@ -50,8 +50,8 @@ def apply_threshold(heatmap, threshold):
 def draw_labeled_boxes(img, labels):
 	for car_number in range(1, labels[1]+1):
 		nonzero = (labels[0] == car_number).nonzero()
-		nonzeroy = np.array
-		nonzerox = np.array
+		nonzeroy = np.array(nonzero[0])
+		nonzerox = np.array(nonzero[1])
 
 		bbox = ((np.min(nonzerox), np.min(nonzeroy)), (np.max(nonzerox),np.max(nonzeroy)))
 		cv2.rectangle(img, bbox[0], bbox[1], (0,0,255), 6)
@@ -77,53 +77,57 @@ def pipeline(img, clf, scaler, settings):
 
 	pipeline.heatmap = np.zeros_like(img)
 	pipeline.heatmap = add_heat(pipeline.heatmap, hot_boxes)
-	pipeline.heatmap = apply_threshold(pipeline.heatmap, 0)
+	pipeline.heatmap = apply_threshold(pipeline.heatmap, 1)
 
 	# Draw and count labeled boxes here:
 	pipeline.labels = label(pipeline.heatmap)
-	#draw_labeled_boxes()
+	
+	return draw_labeled_boxes(img, pipeline.labels)
 
-	return pipeline.window2_img
-
+	#return pipeline.window2_img
+	#return pipeline.heatmap
 
 
 # Use the pipeline to process only a single image.  Useful for tweaking parameters.
-def imageProcessing():
-	height = 2
-	width = 3
-
+def imageProcessing(image, svc, X_scaler, settings):
+	height = 3
+	width = 1
+		
 	image = mpimg.imread('test_images/test1.jpg')
+
+	result = pipeline(image, svc, X_scaler, settings)
+
+	print(pipeline.labels[1], ' cars found.')
 	
-	result = pipeline(image)
 	plt.subplot(height,width,1)
 	plt.imshow(image)
 	plt.title('Original Input Image')
+	plt.subplot(height,width,2)
+	plt.imshow(pipeline.heatmap)
+	plt.title('Heatmap')
 	plt.subplot(height,width,height*width)
 	plt.imshow(result)
 	plt.title('Output Image')
 	plt.tight_layout()
 	plt.show()
+	sys.exit()
 
 
 # Use the pipeline to compile a video.
-def videoProcessing():
-	clip = VideoFileClip('./test_video.mp4')
+def videoProcessing(clip, svc, X_scaler, settings):
+	clip = VideoFileClip('./videos/project_video.mp4')
 	output_handel = './output.mp4'
-	output_stream = clip.fl_image(pipeline)
+	output_stream = clip.fl_image(lambda frame: pipeline(frame, svc, X_scaler, settings))
 	output_stream.write_videofile(output_handel, audio=False)
+	sys.exit()
 
 
 def usage():
 	pass
 
 
+
 def main(argv):
-	pass
-
-
-
-
-if __name__=='__main__':
 
 	# Only using three small set. 
 	# Could be an idea to implement the option to use the larger set via a command line option.
@@ -159,6 +163,10 @@ if __name__=='__main__':
 	print('Using:', settings.orient, 'orientations', settings.pix_per_cell, 'pixels per cell and', settings.cell_per_block,'cells per block')
 	print('Feature vector length:', len(X_train[0]))
  
+	# We first train a HOG classifier.  We are doing this on-the-fly, without saving the results.
+	# After we have trained it, we can use the classifier by applying the sliding window search.
+	# This is done in the pipeline.
+
 	svc = LinearSVC()
 	t_start = time.time()
 	svc.fit(X_train, y_train)
@@ -167,27 +175,41 @@ if __name__=='__main__':
 	print('Test Accuracy of SVC = ', round(svc.score(X_test, y_test), 4))
 
 
-	image = mpimg.imread('test_images/test1.jpg')
-	# We first train a HOG classifier.  We are doing this on-the-fly, without saving the results.
-	# After we have trained it, we can use the classifier by applying the sliding window search.
-	# This is done in the pipeline.
+
+	try:
+		opts, args = getopt.getopt(argv, 'vih', ['Image=', 'Video=', 'help'])
+	except getopt.GetoptError as err:
+		print(err)
+		usage()
+		sys.exit(2)
+
+	for opt, arg in opts:
+		if opt in ('-i', '--Image'):
+			print('Option: ' + '\'' + arg + '\'')
+			imageProcessing(arg, svc, X_scaler, settings)
+			
+		elif opt in ('-v', '--Video'):
+			videoProcessing(arg, svc, X_scaler, settings)
+			
+		elif opt in ('-h', '--help'):
+			usage()
+			sys.exit()
+			
+		elif opt == '-c':
+			global _tweak
+			_tweak = 1
+
+		else:
+			usage()
+			sys.exit()
 
 
-	result = pipeline(image, svc, X_scaler, settings)
-	print(pipeline.labels[1], ' cars found.')
-	print(pipeline.labels[0])
 
-	plt.imshow(pipeline.heatmap, vmin=0, vmax=5)
-	plt.title('Output of Pipeline')
-	plt.colorbar()
-	plt.show()
 
+
+if __name__=='__main__':
+	main(sys.argv[1:])
 	sys.exit()
-
-
-
-
-
 
 
 
