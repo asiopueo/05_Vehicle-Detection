@@ -20,6 +20,20 @@ from search_and_classify import search_windows, extract_features
 #from moviepy.editor import VideoFileClip
 
 
+class Settings:
+	def __init__(self):
+		self.color_space = 'RGB' 		# Can be RGB, HSV, LUV, HLS, YUV, YCrCb
+		self.spatial_size = (32, 32) 	# Spatial binning dimensions
+		self.hist_bins = 32    			# Number of histogram bins
+		self.orient = 9  				# HOG orientations
+		self.pix_per_cell = 8 			# HOG pixels per cell
+		self.cell_per_block = 2 		# HOG cells per block
+		self.hog_channel = 0 			# Can be 0, 1, 2, or "ALL"
+		self.spatial_feat = True 		# Spatial features on or off
+		self.hist_feat = True 			# Histogram features on or off
+		self.hog_feat = True 			# HOG features on or off
+
+
 
 
 def add_heat(heat, bbox_list):
@@ -45,7 +59,7 @@ def draw_labeled_boxes(img, labels):
 	return img
 
 
-def pipeline(img, clf, scaler):
+def pipeline(img, clf, scaler, settings):
 	# We will use three different sizes of sliding windows:
 	# Their start and stop poitions will be determined at the later stage of pipeline development.
 
@@ -59,7 +73,7 @@ def pipeline(img, clf, scaler):
 
 	# We need to apply matching algorithm here:
 	hot_boxes = []
-	hot_boxes = search_windows(img, pipeline.windows2, clf=clf, scaler=scaler)
+	hot_boxes = search_windows(img, pipeline.windows2, clf, scaler, settings)
 
 	pipeline.heatmap = np.zeros_like(img)
 	pipeline.heatmap = add_heat(pipeline.heatmap, hot_boxes)
@@ -124,28 +138,15 @@ if __name__=='__main__':
 		else:
 			cars.append(image)
 
-	# All the parameters have to be harmonized!!!
-	
-	color_space = 'RGB' 		# Can be RGB, HSV, LUV, HLS, YUV, YCrCb
-	orient = 9  				# HOG orientations
-	pix_per_cell = 8 			# HOG pixels per cell
-	cell_per_block = 2 			# HOG cells per block
-	hog_channel = 0 			# Can be 0, 1, 2, or "ALL"
-	spatial_size = (32, 32) 	# Spatial binning dimensions
-	hist_bins = 32    			# Number of histogram bins
-	spatial_feat = True 		# Spatial features on or off
-	hist_feat = True 			# Histogram features on or off
-	hog_feat = True 			# HOG features on or off
-	y_start_stop = [None, None]	# Min and max in y to search in slide_window()
+	# Initialize parameters
+	settings = Settings()
 
 
-	car_features = extract_features(cars, color_space=color_space, spatial_size=spatial_size, hist_bins=hist_bins, orient=orient, pix_per_cell=pix_per_cell, cell_per_block=cell_per_block, hog_channel=hog_channel, spatial_feat=spatial_feat, hist_feat=hist_feat, hog_feat=hog_feat)
-	notcar_features = extract_features(notcars, color_space=color_space, spatial_size=spatial_size, hist_bins=hist_bins, orient=orient, pix_per_cell=pix_per_cell, cell_per_block=cell_per_block, hog_channel=hog_channel, spatial_feat=spatial_feat, hist_feat=hist_feat, hog_feat=hog_feat)
+	car_features = extract_features(cars, settings)
+	notcar_features = extract_features(notcars, settings)
 
 	# Preprocessing
 	X = np.vstack((car_features, notcar_features)).astype(np.float64)
-
-	print('TEST:', X.shape)
 
 	X_scaler = StandardScaler().fit(X)
 	scaled_X = X_scaler.transform(X)
@@ -155,7 +156,7 @@ if __name__=='__main__':
 	rand_state = np.random.randint(0, 100)
 	X_train, X_test, y_train, y_test = train_test_split(scaled_X, y, test_size=0.2, random_state=rand_state)
 
-	print('Using:', orient, 'orientations', pix_per_cell, 'pixels per cell and', cell_per_block,'cells per block')
+	print('Using:', settings.orient, 'orientations', settings.pix_per_cell, 'pixels per cell and', settings.cell_per_block,'cells per block')
 	print('Feature vector length:', len(X_train[0]))
  
 	svc = LinearSVC()
@@ -172,11 +173,13 @@ if __name__=='__main__':
 	# This is done in the pipeline.
 
 
-	result = pipeline(image, svc, X_scaler)
+	result = pipeline(image, svc, X_scaler, settings)
 	print(pipeline.labels[1], ' cars found.')
+	print(pipeline.labels[0])
 
-	plt.imshow(result)
+	plt.imshow(pipeline.heatmap, vmin=0, vmax=5)
 	plt.title('Output of Pipeline')
+	plt.colorbar()
 	plt.show()
 
 	sys.exit()

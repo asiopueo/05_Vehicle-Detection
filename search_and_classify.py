@@ -62,11 +62,11 @@ def get_hog_features(img, orient, pix_per_cell, cell_per_block, vis=False, featu
 
 
 
-def single_img_features(img, color_space='RGB', spatial_size=(32,32), hist_bins=32, orient=9, pix_per_cell=8, cell_per_block=2, hog_channel=0, spatial_feat=True, hist_feat=True, hog_feat=True):
+def single_img_features(img, settings):
 	img_features=[]
 
-	if color_space != 'RGB':
-		if color_space == 'HSV':
+	if settings.color_space != 'RGB':
+		if settings.color_space == 'HSV':
 			feature_image = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
 		elif color_space == 'LUV':
 			feature_image = cv2.cvtColor(img, cv2.COLOR_RGB2LUV)
@@ -78,22 +78,22 @@ def single_img_features(img, color_space='RGB', spatial_size=(32,32), hist_bins=
 			feature_image = cv2.cvtColor(img, cv2.COLOR_RGB2YCrCb)
 	else: feature_image = np.copy(img) 
 
-	if spatial_feat == True:
-		spatial_features = bin_spatial(feature_image, size=spatial_size)
+	if settings.spatial_feat == True:
+		spatial_features = bin_spatial(feature_image, size=settings.spatial_size)
 		img_features.append(spatial_features)
 
-	if hist_feat == True:
-		hist_features = color_hist(feature_image, nbins=hist_bins)
+	if settings.hist_feat == True:
+		hist_features = color_hist(feature_image, nbins=settings.hist_bins)
 		img_features.append(hist_features)
 
-	if hog_feat == True:
-		if hog_channel == 'ALL':
+	if settings.hog_feat == True:
+		if settings.hog_channel == 'ALL':
 			hog_features = []
 			for channel in range(feature_image.shape[2]):
-				hog_features.extend( get_hog_features(feature_image[:,:,channel], orient, pix_per_cell, cell_per_block, vis=False, feature_vec=True) )
+				hog_features.extend( get_hog_features(feature_image[:,:,channel], settings.orient, settings.pix_per_cell, settings.cell_per_block, vis=False, feature_vec=True) )
 			hog_features = np.ravel(hog_features) 
 		else:
-			hog_features = get_hog_features(feature_image[:,:,hog_channel], orient, pix_per_cell, cell_per_block, vis=False, feature_vec=True)
+			hog_features = get_hog_features(feature_image[:,:,settings.hog_channel], settings.orient, settings.pix_per_cell, settings.cell_per_block, vis=False, feature_vec=True)
 
 		img_features.append(hog_features)
 
@@ -101,25 +101,25 @@ def single_img_features(img, color_space='RGB', spatial_size=(32,32), hist_bins=
 
 
 
-def extract_features(imgs, color_space='RGB', spatial_size=(32, 32), hist_bins=32, orient=9, pix_per_cell=8, cell_per_block=2, hog_channel=0, spatial_feat=True, hist_feat=True, hog_feat=True):
+def extract_features(imgs, settings):
 
 	features = []
 
 	for file in imgs:
 		image = mpimg.imread(file)
-		single_features = single_img_features(image, color_space, spatial_size, hist_bins, orient, pix_per_cell, cell_per_block, hog_channel, spatial_feat, hist_feat, hog_feat)
+		single_features = single_img_features(image, settings)
 		features.append(single_features)
 
 	return features
 
 
 
-def search_windows(img, windows, clf, scaler, color_space='RGB', spatial_size=(32, 32), hist_bins=32, hist_range=(0, 256), orient=9, pix_per_cell=8, cell_per_block=2, hog_channel=0, spatial_feat=True, hist_feat=True, hog_feat=True):
+def search_windows(img, windows, clf, scaler, settings):
 	hot_windows = []
 
 	for window in windows:
 		test_img = cv2.resize(img[window[0][1]:window[1][1], window[0][0]:window[1][0]], (64, 64))      
-		features = single_img_features(test_img, color_space, spatial_size, hist_bins, orient, pix_per_cell, cell_per_block, hog_channel, spatial_feat, hist_feat, hog_feat)
+		features = single_img_features(test_img, settings)
 		
 		test_features = scaler.transform(features.reshape(1, -1))
 		
