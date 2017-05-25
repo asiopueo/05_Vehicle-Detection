@@ -63,37 +63,39 @@ def pipeline(img, clf, scaler, settings):
 	# We will use three different sizes of sliding windows:
 	# Their start and stop poitions will be determined at the later stage of pipeline development.
 
-	pipeline.windows1 = sliding_window(img, x_start_stop=[None,None], y_start_stop=[360,None], xy_window=(64,64), xy_overlap=(0.75,0.75))
-	pipeline.windows2 = sliding_window(img, x_start_stop=[None,None], y_start_stop=[360,None], xy_window=(128,128), xy_overlap=(0.75,0.75))
-	pipeline.windows3 = sliding_window(img, x_start_stop=[None,None], y_start_stop=[360,None], xy_window=(256,256), xy_overlap=(0.75,0.75))
+	pipeline.windows_S = sliding_window(img, x_start_stop=[None,None], y_start_stop=[360,None], xy_window=(64,64), xy_overlap=(0.5,0.5))
+	pipeline.windows_M = sliding_window(img, x_start_stop=[None,None], y_start_stop=[360,None], xy_window=(128,128), xy_overlap=(0.75,0.75))
+	pipeline.windows_L = sliding_window(img, x_start_stop=[None,None], y_start_stop=[360,None], xy_window=(256,256), xy_overlap=(0.75,0.75))
 
-	pipeline.window1_img = draw_boxes(img, pipeline.windows1, color=(255,0,0), thick=3)
-	pipeline.window2_img = draw_boxes(img, pipeline.windows2, color=(0,255,0), thick=3)
-	pipeline.window3_img = draw_boxes(img, pipeline.windows3, color=(0,0,255), thick=3)
+	pipeline.window_S_img = draw_boxes(img, pipeline.windows_S, color=(255,0,0), thick=3)
+	pipeline.window_M_img = draw_boxes(img, pipeline.windows_M, color=(0,255,0), thick=3)
+	pipeline.window_L_img = draw_boxes(img, pipeline.windows_L, color=(0,0,255), thick=3)
 
 	# We need to apply matching algorithm here:
 	hot_boxes = []
-	hot_boxes = search_windows(img, pipeline.windows2, clf, scaler, settings)
-
 	pipeline.heatmap = np.zeros_like(img)
+	
+	hot_boxes = search_windows(img, pipeline.windows_L, clf, scaler, settings)
 	pipeline.heatmap = add_heat(pipeline.heatmap, hot_boxes)
-	pipeline.heatmap = apply_threshold(pipeline.heatmap, 1)
+	hot_boxes = search_windows(img, pipeline.windows_M, clf, scaler, settings)
+	pipeline.heatmap = add_heat(pipeline.heatmap, hot_boxes)
+	hot_boxes = search_windows(img, pipeline.windows_S, clf, scaler, settings)
+	pipeline.heatmap = add_heat(pipeline.heatmap, hot_boxes)
+		
+	pipeline.heatmap = apply_threshold(pipeline.heatmap, 75)
 
 	# Draw and count labeled boxes here:
 	pipeline.labels = label(pipeline.heatmap)
-	
 	return draw_labeled_boxes(img, pipeline.labels)
 
-	#return pipeline.window2_img
-	#return pipeline.heatmap
 
 
 # Use the pipeline to process only a single image.  Useful for tweaking parameters.
 def imageProcessing(image, svc, X_scaler, settings):
 	height = 3
-	width = 1
+	width = 2
 		
-	image = mpimg.imread('test_images/test1.jpg')
+	image = mpimg.imread('test_images/test6.jpg')
 
 	result = pipeline(image, svc, X_scaler, settings)
 
@@ -102,21 +104,44 @@ def imageProcessing(image, svc, X_scaler, settings):
 	plt.subplot(height,width,1)
 	plt.imshow(image)
 	plt.title('Original Input Image')
+	
 	plt.subplot(height,width,2)
-	plt.imshow(pipeline.heatmap)
 	plt.title('Heatmap')
-	plt.subplot(height,width,height*width)
+	plt.imshow(pipeline.heatmap)
+	plt.imsave('./output/heatmap.png', pipeline.heatmap)
+
+	plt.subplot(height,width,3)
+	plt.title('Large-sized Boxes')
+	plt.imshow(pipeline.window_L_img)
+	plt.imsave('./output/large_boxes.png', pipeline.window_L_img)
+
+	plt.subplot(height,width,4)
+	plt.title('Medium-sized Boxes')
+	plt.imshow(pipeline.window_M_img)
+	plt.imsave('./output/medium_boxes.png', pipeline.window_M_img)
+
+	plt.subplot(height,width,5)
+	plt.title('Small-sized Boxes')
+	plt.imshow(pipeline.window_S_img)
+	plt.imsave('./output/small_boxes.png', pipeline.window_S_img)
+
+	plt.subplot(height,width,6)
+	plt.title('Resulting Image')
 	plt.imshow(result)
-	plt.title('Output Image')
+	plt.imsave('./output/resulting_image.png', result)
+
+
 	plt.tight_layout()
+
 	plt.show()
 	sys.exit()
 
 
 # Use the pipeline to compile a video.
 def videoProcessing(clip, svc, X_scaler, settings):
-	clip = VideoFileClip('./videos/project_video.mp4')
-	output_handel = './output.mp4'
+	clip = VideoFileClip('./test_videos/project_video.mp4')
+	output_handel = './output/heatmap.mp4'
+	#output_handel = './output/bboxes.mp4'
 	output_stream = clip.fl_image(lambda frame: pipeline(frame, svc, X_scaler, settings))
 	output_stream.write_videofile(output_handel, audio=False)
 	sys.exit()
@@ -128,8 +153,7 @@ def usage():
 
 
 def main(argv):
-
-	# Only using three small set. 
+	# Only using the small set. 
 	# Could be an idea to implement the option to use the larger set via a command line option.
 	images = glob.glob('./vehicles_smallset/cars[1-3]/*.jpeg') + glob.glob('./non-vehicles_smallset/notcars[1-3]/*.jpeg')
 

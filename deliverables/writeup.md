@@ -18,8 +18,6 @@ The goals / steps of this project are the following:
 
 ####1. Explain how (and identify where in your code) you extracted HOG features from the training images.
 
-The code for this step is contained in the first code cell of the IPython notebook (or in lines # through # of the file called `some_file.py`).  
-
 I started by reading in all the `vehicle` and `non-vehicle` images.  Here is an example of one of each of the `vehicle` and `non-vehicle` classes:
 
 <img src="./examples/car_not_car.png" width="300">
@@ -77,7 +75,10 @@ The medium scale is located in a ribbon between and .
 
 And finally, the largest scale is located in a ribbon between ?? and ?? px.
 
-<img src="./examples/sliding_windows.jpg" width="300">
+<img src="../small_boxes.png" width="300">
+<img src="../medium_boxes.png" width="300">
+<img src="../large_boxes.png" width="300">
+
 
 Using the 'functions are also objects' in Python, I can easily read them out for tweaking purposes in the `imageProcessing()` function.
 
@@ -91,7 +92,30 @@ The pipeline is structured as follows:
 
 Ultimately I searched on two scales using YCrCb 3-channel HOG features plus spatially binned color and histograms of color in the feature vector, which provided a nice result.  Here are some example images:
 
-<img src="./examples/sliding_window.jpg" width="300">
+<img src="./resulting_image1.png" width="300">
+
+The corresponding heatmap:
+
+<img src="./heatmap1.png" width="300">
+
+The second test image, `test2.jpg`, did not result in any detection at all.
+
+Applying `test3.jpg` to the pipeline:
+<img src="./resulting_image3.png" width="300">
+<img src="./heatmap3.png" width="300">
+
+Applying `test4.jpg` to the pipeline:
+<img src="./resulting_image4.png" width="300">
+<img src="./heatmap4.png" width="300">
+
+Applying `test5.jpg` to the pipeline:
+<img src="./resulting_image5.png" width="300">
+<img src="./heatmap5.png" width="300">
+
+Applying `test6.jpg` to the pipeline:
+<img src="./resulting_image6.png" width="300">
+<img src="./heatmap6.png" width="300">
+
 
 Architectually, I have defined a class `Settings` whose main purpose is to act as a struct for the parameters of the HOG classifier.
 
@@ -133,12 +157,21 @@ Here are six frames and their corresponding heatmaps:
 
 <img src="./examples/bboxes_and_heat.png" width="300">
 
+
+The following two pictures illustrate the application of the pipeline onto `test1.jpg`, but without any threshold: 
+
+<img src="./heatmap.png" width="300">
+
+Applying the corresponding bounding boxes:
+
+<img src="./bounding_boxes.png" width="300">
+
 Here is the output of `scipy.ndimage.measurements.label()` on the integrated heatmap from all six frames:
 <img src="./examples/labels_map.png" width="300">
 
 Here the resulting bounding boxes are drawn onto the last frame in the series:
 
-<img src="./examples/output_bboxes.png" width="300">
+<img src="./resulting_image.png" width="300">
 
 The labels can be read out by `labels[1]` which gived us the 
 
@@ -151,6 +184,14 @@ The labels can be read out by `labels[1]` which gived us the
 ####1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
 
 Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.  
+
+Further improvements should focus on making the algorithm more efficient, i.e. make it more likely to being used for real-time applications.  In its current state, the pipeline is much too slow, in particular due to inefficient use of the sliding window technique.
+
+While experimenting with different parameters and subroutines, I've learned that the `add_heat()`-function does consume a lot time.  At first, I have forgotten to add the small windows to the heatmap, but after I have corrected this mistake, the compilation of videos had become much slower.
+
+
+One interesting feature to stabilize the tracking algorithm could be the use of temporal averaging.  This would require the use of a buffer for a few frames.  Especially real-time usages would require very fast algorithms due to 
+
 
 I found the solution from the lectures rather unsatisfying, as there are too many arguments in the function.  This has certainly much to do with 
 

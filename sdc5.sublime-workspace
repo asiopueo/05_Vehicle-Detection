@@ -157,7 +157,7 @@
 			"file": "main.py",
 			"settings":
 			{
-				"buffer_size": 6088,
+				"buffer_size": 6205,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -247,7 +247,7 @@
 	],
 	"find":
 	{
-		"height": 38.0
+		"height": 36.0
 	},
 	"find_in_files":
 	{
@@ -261,6 +261,7 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"label",
 			"y_start",
 			"search",
 			"channel",
@@ -357,7 +358,8 @@
 						],
 						"settings":
 						{
-							"syntax": "Packages/Python/Python.sublime-syntax"
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
 						"translation.y": 920.0,
@@ -372,15 +374,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 6088,
+						"buffer_size": 6205,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2920,
-								2920
+								3587,
+								3587
 							]
 						],
 						"settings":
@@ -389,7 +391,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 1678.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,

@@ -35,7 +35,6 @@ for image in images:
 
 
 
-
 data_info = data_look(cars, notcars)
 
 
