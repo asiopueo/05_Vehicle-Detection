@@ -21,6 +21,7 @@ from moviepy.editor import VideoFileClip
 from collections import deque
 
 
+
 class Settings:
 	def __init__(self):
 		self.color_space = 'RGB' 		# Can be RGB, HSV, LUV, HLS, YUV, YCrCb
@@ -172,15 +173,6 @@ def main(argv):
 	# Only using the small set. 
 	# Could be an idea to implement the option to use the larger set via a command line option.
 	
-	"""
-	imglist = [	'./vehicles/GTI_Far/*.png',
-				'./vehicles/GTI_Left/*.png',
-				'./vehicles/GTI_MiddleClose/*.png',
-				'./vehicles/GTI_Right/*.png',
-				'./vehicles/KITTI_extracted/*.png',
-				'./non-vehicles/Extras/*.png',
-				'./non-vehicles/GTI/*.png']
-	"""				
 	images = glob.glob('./vehicles_smallset/cars[1-3]/*.jpeg') + glob.glob('./non-vehicles_smallset/notcars[1-3]/*.jpeg')
 	#images = glob.glob('./vehicles/*/*.png') + glob.glob('./non-vehicles/*/*.png')
 
@@ -224,14 +216,6 @@ def main(argv):
 	t_end = time.time()
 	print(round(t_start-t_end, 2), 'Seconds to train SVC...')
 	print('Test Accuracy of SVC = ', round(svc.score(X_test, y_test), 4))
-
-
-
-
-
-
-
-
 
 
 
