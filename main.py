@@ -18,6 +18,7 @@ from sliding_window import *
 from search_and_classify import search_windows, extract_features
 
 from moviepy.editor import VideoFileClip
+from collections import deque
 
 
 class Settings:
@@ -38,7 +39,7 @@ class Settings:
 
 def add_heat(heat, bbox_list):
 	for box in bbox_list:
-		heat[box[0][1]:box[1][1], box[0][0]:box[1][0]] += 50
+		heat[box[0][1]:box[1][1], box[0][0]:box[1][0]] += 1# hat funktioniert: 3
 	return heat
 
 
@@ -60,33 +61,47 @@ def draw_labeled_boxes(img, labels):
 
 
 def pipeline(img, clf, scaler, settings):
+
+	if pipeline.flag == 0:
+		pipeline.buffer = deque(6*[],6)
+		pipeline.flag = 1
+	
+
 	# We will use three different sizes of sliding windows:
 	# Their start and stop poitions will be determined at the later stage of pipeline development.
 
-	pipeline.windows_S = sliding_window(img, x_start_stop=[None,None], y_start_stop=[360,None], xy_window=(64,64), xy_overlap=(0.5,0.5))
-	pipeline.windows_M = sliding_window(img, x_start_stop=[None,None], y_start_stop=[360,None], xy_window=(128,128), xy_overlap=(0.75,0.75))
-	pipeline.windows_L = sliding_window(img, x_start_stop=[None,None], y_start_stop=[360,None], xy_window=(256,256), xy_overlap=(0.75,0.75))
-
-	pipeline.window_S_img = draw_boxes(img, pipeline.windows_S, color=(255,0,0), thick=3)
-	pipeline.window_M_img = draw_boxes(img, pipeline.windows_M, color=(0,255,0), thick=3)
+	pipeline.windows_L = sliding_window(img, x_start_stop=[None,None], y_start_stop=[360,None], xy_window=(128,128), xy_overlap=(0.75,0.75))
+	pipeline.windows_M = sliding_window(img, x_start_stop=[None,None], y_start_stop=[360,None], xy_window=(96,96), xy_overlap=(0.75,0.75))
+	pipeline.windows_S = sliding_window(img, x_start_stop=[None,None], y_start_stop=[360,None], xy_window=(64,64), xy_overlap=(0.75,0.75))
+		
 	pipeline.window_L_img = draw_boxes(img, pipeline.windows_L, color=(0,0,255), thick=3)
+	pipeline.window_M_img = draw_boxes(img, pipeline.windows_M, color=(0,255,0), thick=3)
+	pipeline.window_S_img = draw_boxes(img, pipeline.windows_S, color=(255,0,0), thick=3)
 
 	# We need to apply matching algorithm here:
 	hot_boxes = []
-	pipeline.heatmap = np.zeros_like(img)
+	hot_boxes.append(search_windows(img, pipeline.windows_L, clf, scaler, settings))
+	hot_boxes.append(search_windows(img, pipeline.windows_M, clf, scaler, settings))
+	hot_boxes.append(search_windows(img, pipeline.windows_S, clf, scaler, settings))
+
+	heatmap = np.zeros_like(img)	
+	heatmap = add_heat(heatmap, hot_boxes[0])
+	heatmap = add_heat(heatmap, hot_boxes[1])
+	heatmap = add_heat(heatmap, hot_boxes[2])
 	
-	hot_boxes = search_windows(img, pipeline.windows_L, clf, scaler, settings)
-	pipeline.heatmap = add_heat(pipeline.heatmap, hot_boxes)
-	hot_boxes = search_windows(img, pipeline.windows_M, clf, scaler, settings)
-	pipeline.heatmap = add_heat(pipeline.heatmap, hot_boxes)
-	hot_boxes = search_windows(img, pipeline.windows_S, clf, scaler, settings)
-	pipeline.heatmap = add_heat(pipeline.heatmap, hot_boxes)
-		
-	pipeline.heatmap = apply_threshold(pipeline.heatmap, 75)
+	pipeline.buffer.appendleft(heatmap)
+	
+	heatmap = sum(pipeline.buffer)
+	
+	print(heatmap.max())
+
+	pipeline.heatmap = apply_threshold(heatmap, 30)#hat funktioniert: 50
 
 	# Draw and count labeled boxes here:
 	pipeline.labels = label(pipeline.heatmap)
 	return draw_labeled_boxes(img, pipeline.labels)
+
+pipeline.flag = 0
 
 
 
@@ -95,7 +110,7 @@ def imageProcessing(image, svc, X_scaler, settings):
 	height = 3
 	width = 2
 		
-	image = mpimg.imread('test_images/test6.jpg')
+	image = mpimg.imread('test_images/test3.jpg')
 
 	result = pipeline(image, svc, X_scaler, settings)
 
@@ -107,8 +122,8 @@ def imageProcessing(image, svc, X_scaler, settings):
 	
 	plt.subplot(height,width,2)
 	plt.title('Heatmap')
-	plt.imshow(pipeline.heatmap)
-	plt.imsave('./output/heatmap.png', pipeline.heatmap)
+	plt.imshow(pipeline.buffer[0])
+	plt.imsave('./output/heatmap.png', pipeline.buffer[0])
 
 	plt.subplot(height,width,3)
 	plt.title('Large-sized Boxes')
@@ -130,21 +145,22 @@ def imageProcessing(image, svc, X_scaler, settings):
 	plt.imshow(result)
 	plt.imsave('./output/resulting_image.png', result)
 
-
 	plt.tight_layout()
 
 	plt.show()
 	sys.exit()
 
 
+
+
 # Use the pipeline to compile a video.
 def videoProcessing(clip, svc, X_scaler, settings):
-	clip = VideoFileClip('./test_videos/project_video.mp4')
-	output_handel = './output/heatmap.mp4'
-	#output_handel = './output/bboxes.mp4'
+	clip = VideoFileClip('./test_videos/project_video.mp4')#.subclip(5,10)
+	output_handle = './output/bboxes.mp4'
 	output_stream = clip.fl_image(lambda frame: pipeline(frame, svc, X_scaler, settings))
-	output_stream.write_videofile(output_handel, audio=False)
+	output_stream.write_videofile(output_handle, audio=False)
 	sys.exit()
+
 
 
 def usage():
@@ -155,7 +171,18 @@ def usage():
 def main(argv):
 	# Only using the small set. 
 	# Could be an idea to implement the option to use the larger set via a command line option.
+	
+	"""
+	imglist = [	'./vehicles/GTI_Far/*.png',
+				'./vehicles/GTI_Left/*.png',
+				'./vehicles/GTI_MiddleClose/*.png',
+				'./vehicles/GTI_Right/*.png',
+				'./vehicles/KITTI_extracted/*.png',
+				'./non-vehicles/Extras/*.png',
+				'./non-vehicles/GTI/*.png']
+	"""				
 	images = glob.glob('./vehicles_smallset/cars[1-3]/*.jpeg') + glob.glob('./non-vehicles_smallset/notcars[1-3]/*.jpeg')
+	#images = glob.glob('./vehicles/*/*.png') + glob.glob('./non-vehicles/*/*.png')
 
 	cars = []
 	notcars = []
@@ -197,6 +224,14 @@ def main(argv):
 	t_end = time.time()
 	print(round(t_start-t_end, 2), 'Seconds to train SVC...')
 	print('Test Accuracy of SVC = ', round(svc.score(X_test, y_test), 4))
+
+
+
+
+
+
+
+
 
 
 
