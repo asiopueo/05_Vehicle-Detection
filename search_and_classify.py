@@ -62,7 +62,7 @@ def get_hog_features(img, orient, pix_per_cell, cell_per_block, vis=False, featu
 
 
 
-def single_img_features(img, settings):
+def img_features(img, settings):
 	img_features=[]
 
 	if settings.color_space != 'RGB':
@@ -100,30 +100,28 @@ def single_img_features(img, settings):
 	return np.concatenate(img_features)
 
 
+def subsample(img_feats, window, settings):
+	
+	window_feat = img_feats[:,:,:,:,:]
 
-def extract_features(imgs, settings):
+	return
 
-	features = []
-
-	for file in imgs:
-		image = mpimg.imread(file)
-		single_features = single_img_features(image, settings)
-		features.append(single_features)
-
-	return features
 
 
 
 def search_windows(img, windows, clf, scaler, settings):
-	hot_windows = []
 
+	img_feats = img_features(img, settings)
+	img_feats = scaler.transform(img_feats.reshape(1, -1))
+
+	hot_windows = []
 	for window in windows:
 		test_img = cv2.resize(img[window[0][1]:window[1][1], window[0][0]:window[1][0]], (64, 64))      
-		features = single_img_features(test_img, settings)
 		
-		test_features = scaler.transform(features.reshape(1, -1))
-		
-		prediction = clf.predict(test_features)
+		window_features = subsample(img_feats, window)
+		window_features = scaler.transform(window_features.reshape(1, -1))
+
+		prediction = clf.predict(window_features)
 
 		if prediction == 1:
 			hot_windows.append(window)
@@ -134,7 +132,16 @@ def search_windows(img, windows, clf, scaler, settings):
 
 
 
+def extract_features(imgs, settings):
 
+	features = []
+
+	for file in imgs:
+		image = mpimg.imread(file)
+		single_features = img_features(image, settings)
+		features.append(single_features)
+
+	return features
 
 
 

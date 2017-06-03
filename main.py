@@ -71,24 +71,24 @@ def pipeline(img, clf, scaler, settings):
 	# We will use three different sizes of sliding windows:
 	# Their start and stop poitions will be determined at the later stage of pipeline development.
 
-	pipeline.windows_L = sliding_window(img, x_start_stop=[None,None], y_start_stop=[360,None], xy_window=(128,128), xy_overlap=(0.75,0.75))
-	pipeline.windows_M = sliding_window(img, x_start_stop=[None,None], y_start_stop=[360,None], xy_window=(96,96), xy_overlap=(0.75,0.75))
-	pipeline.windows_S = sliding_window(img, x_start_stop=[None,None], y_start_stop=[360,None], xy_window=(64,64), xy_overlap=(0.75,0.75))
-		
-	pipeline.window_L_img = draw_boxes(img, pipeline.windows_L, color=(0,0,255), thick=3)
-	pipeline.window_M_img = draw_boxes(img, pipeline.windows_M, color=(0,255,0), thick=3)
+	#pipeline.windows_L = sliding_window(img, x_start_stop=[None,None], y_start_stop=[336,None], xy_window=(128,128), xy_overlap=(0.75,0.75))
+	#pipeline.windows_M = sliding_window(img, x_start_stop=[None,None], y_start_stop=[336,None], xy_window=(96,96), xy_overlap=(0.75,0.75))
+	pipeline.windows_S = sliding_window(img, x_start_stop=[None,None], y_start_stop=[336,None], xy_window=(64,64), xy_overlap=(0.5,0.5), pix_per_cell=8)
+
+	#pipeline.window_L_img = draw_boxes(img, pipeline.windows_L, color=(0,0,255), thick=3)
+	#pipeline.window_M_img = draw_boxes(img, pipeline.windows_M, color=(0,255,0), thick=3)
 	pipeline.window_S_img = draw_boxes(img, pipeline.windows_S, color=(255,0,0), thick=3)
 
 	# We need to apply matching algorithm here:
 	hot_boxes = []
-	hot_boxes.append(search_windows(img, pipeline.windows_L, clf, scaler, settings))
-	hot_boxes.append(search_windows(img, pipeline.windows_M, clf, scaler, settings))
-	hot_boxes.append(search_windows(img, pipeline.windows_S, clf, scaler, settings))
+	#hot_boxes.append(search_windows(img, pipeline.windows_L, clf, scaler, settings))
+	#hot_boxes.append(search_windows(img, pipeline.windows_M, clf, scaler, settings))
+	#hot_boxes.append(search_windows(img, pipeline.windows_S, clf, scaler, settings))
 
 	heatmap = np.zeros_like(img)	
-	heatmap = add_heat(heatmap, hot_boxes[0])
-	heatmap = add_heat(heatmap, hot_boxes[1])
-	heatmap = add_heat(heatmap, hot_boxes[2])
+	#heatmap = add_heat(heatmap, hot_boxes[0])
+	#heatmap = add_heat(heatmap, hot_boxes[1])
+	#heatmap = add_heat(heatmap, hot_boxes[2])
 	
 	pipeline.buffer.appendleft(heatmap)
 	
@@ -108,8 +108,8 @@ pipeline.flag = 0
 
 # Use the pipeline to process only a single image.  Useful for tweaking parameters.
 def imageProcessing(image, svc, X_scaler, settings):
-	height = 3
-	width = 2
+	height = 2
+	width = 1
 		
 	image = mpimg.imread('test_images/test3.jpg')
 
@@ -121,30 +121,30 @@ def imageProcessing(image, svc, X_scaler, settings):
 	plt.imshow(image)
 	plt.title('Original Input Image')
 	
+	#plt.subplot(height,width,2)
+	#plt.title('Heatmap')
+	#plt.imshow(pipeline.buffer[0])
+	#plt.imsave('./output/heatmap.png', pipeline.buffer[0])
+
+	#plt.subplot(height,width,3)
+	#plt.title('Large-sized Boxes')
+	#plt.imshow(pipeline.window_L_img)
+	#plt.imsave('./output/large_boxes.png', pipeline.window_L_img)
+
+	#plt.subplot(height,width,4)
+	#plt.title('Medium-sized Boxes')
+	#plt.imshow(pipeline.window_M_img)
+	#plt.imsave('./output/medium_boxes.png', pipeline.window_M_img)
+
 	plt.subplot(height,width,2)
-	plt.title('Heatmap')
-	plt.imshow(pipeline.buffer[0])
-	plt.imsave('./output/heatmap.png', pipeline.buffer[0])
-
-	plt.subplot(height,width,3)
-	plt.title('Large-sized Boxes')
-	plt.imshow(pipeline.window_L_img)
-	plt.imsave('./output/large_boxes.png', pipeline.window_L_img)
-
-	plt.subplot(height,width,4)
-	plt.title('Medium-sized Boxes')
-	plt.imshow(pipeline.window_M_img)
-	plt.imsave('./output/medium_boxes.png', pipeline.window_M_img)
-
-	plt.subplot(height,width,5)
 	plt.title('Small-sized Boxes')
 	plt.imshow(pipeline.window_S_img)
-	plt.imsave('./output/small_boxes.png', pipeline.window_S_img)
+	#plt.imsave('./output/small_boxes.png', pipeline.window_S_img)
 
-	plt.subplot(height,width,6)
-	plt.title('Resulting Image')
-	plt.imshow(result)
-	plt.imsave('./output/resulting_image.png', result)
+	#plt.subplot(height,width,6)
+	#plt.title('Resulting Image')
+	#plt.imshow(result)
+	#plt.imsave('./output/resulting_image.png', result)
 
 	plt.tight_layout()
 

@@ -8,8 +8,8 @@ import matplotlib.pyplot as plt
 
 
 
-
-def sliding_window(img, x_start_stop=[None,None], y_start_stop=[None,None], xy_window=(64,64), xy_overlap=(0.5,0.5)):
+# Not quite finished!
+def sliding_window(img, x_start_stop=[None,None], y_start_stop=[None,None], xy_window=(64,64), xy_overlap=(0.5,0.5), pix_per_cell=8):
 	 
 	if x_start_stop[0] == None:
 		x_start_stop[0] = 0
@@ -19,31 +19,43 @@ def sliding_window(img, x_start_stop=[None,None], y_start_stop=[None,None], xy_w
 		y_start_stop[0] = 0
 	if y_start_stop[1] == None:
 		y_start_stop[1] = img.shape[0]
+ 
+
+
+	x_start_stop[0] = x_start_stop[0] // pix_per_cell
+	x_start_stop[1] = x_start_stop[1] // pix_per_cell
+	y_start_stop[0] = y_start_stop[0] // pix_per_cell
+	y_start_stop[1] = y_start_stop[1] // pix_per_cell
+
+	nx_cells_span = x_start_stop[1] - x_start_stop[0]
+	ny_cells_span = y_start_stop[1] - y_start_stop[0]
+
+	nx_cells_per_step = np.int( (xy_window[0]*(1 - xy_overlap[0]))//pix_per_cell )
+	ny_cells_per_step = np.int( (xy_window[1]*(1 - xy_overlap[1]))//pix_per_cell )
+
+	# nx_buffer not fully defined yet  
+	nx_buffer = np.int( (xy_window[0]*(xy_overlap[0]))//pix_per_cell )
+	ny_buffer = np.int( (xy_window[1]*(xy_overlap[1]))//pix_per_cell )
+
+	nx_windows = np.int( (nx_cells_span-nx_buffer)/nx_cells_per_step ) 
+	ny_windows = np.int( (ny_cells_span-ny_buffer)/ny_cells_per_step ) 
 	
-	xspan = x_start_stop[1] - x_start_stop[0]
-	yspan = y_start_stop[1] - y_start_stop[0]
-
-	nx_pix_per_step = np.int(xy_window[0]*(1 - xy_overlap[0]))
-	ny_pix_per_step = np.int(xy_window[1]*(1 - xy_overlap[1]))
-
-	nx_buffer = np.int(xy_window[0]*(xy_overlap[0]))
-	ny_buffer = np.int(xy_window[1]*(xy_overlap[1]))
-	nx_windows = np.int((xspan-nx_buffer)/nx_pix_per_step) 
-	ny_windows = np.int((yspan-ny_buffer)/ny_pix_per_step) 
-
 	window_list=[]
 
 	for ys in range(ny_windows):
 		for xs in range(nx_windows):
   
-			startx = xs*nx_pix_per_step + x_start_stop[0]
+			startx = (xs*nx_cells_per_step + x_start_stop[0]) * pix_per_cell
 			endx = startx + xy_window[0]
-			starty = ys*ny_pix_per_step + y_start_stop[0]
+			starty = (ys*ny_cells_per_step + y_start_stop[0]) * pix_per_cell
 			endy = starty + xy_window[1]
 
 			window_list.append(((startx, starty), (endx, endy)))
 
 	return window_list
+
+
+
 
 
 def draw_boxes(img, bboxes, color=(0, 0, 255), thick=6):
@@ -53,6 +65,8 @@ def draw_boxes(img, bboxes, color=(0, 0, 255), thick=6):
 		cv2.rectangle(imcopy, bbox[0], bbox[1], color, thick)
 
 	return imcopy
+
+
 
 
 
