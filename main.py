@@ -74,9 +74,9 @@ def pipeline(img, clf, scaler, settings):
 	# We will use three different sizes of sliding windows:
 	# Their start and stop poitions will be determined at the later stage of pipeline development.
 
-	windows_L = sliding_window(img, x_start_stop=[None,None], y_start_stop=[450,None], xy_window=(128,128), xy_overlap=(0.5,0.5))
-	windows_M = sliding_window(img, x_start_stop=[None,None], y_start_stop=[336,None], xy_window=(96,96), xy_overlap=(0.5,0.5))
-	windows_S = sliding_window(img, x_start_stop=[None,None], y_start_stop=[336,None], xy_window=(64,64), xy_overlap=(0.75,0.75), pix_per_cell=8)
+	windows_L = sliding_window(img, x_start_stop=[None,None], y_start_stop=[336,592], xy_window=(128,128), xy_overlap=(0.75,0.75))
+	windows_M = sliding_window(img, x_start_stop=[None,None], y_start_stop=[336,592], xy_window=(96,96), xy_overlap=(0.75,0.75))
+	windows_S = sliding_window(img, x_start_stop=[None,None], y_start_stop=[336,592], xy_window=(64,64), xy_overlap=(0.75,0.75), pix_per_cell=8)
 
 	pipeline.window_L_img = draw_boxes(img, windows_L, color=(0,0,255), thick=3)
 	pipeline.window_M_img = draw_boxes(img, windows_M, color=(0,255,0), thick=3)
@@ -93,9 +93,9 @@ def pipeline(img, clf, scaler, settings):
 	hot_boxes = [item for sublist in hot_boxes for item in sublist]
 	
 
-	#hot_boxes = search(pipeline.windows_S, boxscale=1)
-	#hot_boxes = search(pipeline.windows_M, boxscale=1.5)
-	#hot_boxes = search(pipeline.windows_L, boxscale=2)
+	#hot_boxes = search(windows_S, boxscale=1)
+	#hot_boxes = search(windows_M, boxscale=1.5)
+	#hot_boxes = search(windows_L, boxscale=2)
 	
 
 	t_end = time.time()
@@ -122,7 +122,7 @@ pipeline.flag = 0
 # Use the pipeline to process only a single image.  Useful for tweaking parameters.
 def imageProcessing(image, svc, X_scaler, settings):
 	height = 2
-	width = 1
+	width = 2
 		
 	image = mpimg.imread('test_images/test1.jpg')
 
@@ -139,17 +139,17 @@ def imageProcessing(image, svc, X_scaler, settings):
 	#plt.imshow(pipeline.buffer[0])
 	#plt.imsave('./output/heatmap.png', pipeline.buffer[0])
 
-	#plt.subplot(height,width,2)
-	#plt.title('Large-sized Boxes')
-	#plt.imshow(pipeline.window_L_img)
+	plt.subplot(height,width,2)
+	plt.title('Large-sized Boxes')
+	plt.imshow(pipeline.window_L_img)
 	#plt.imsave('./output/large_boxes.png', pipeline.window_L_img)
 
-	#plt.subplot(height,width,2)
-	#plt.title('Medium-sized Boxes')
-	#plt.imshow(pipeline.window_M_img)
+	plt.subplot(height,width,3)
+	plt.title('Medium-sized Boxes')
+	plt.imshow(pipeline.window_M_img)
 	#plt.imsave('./output/medium_boxes.png', pipeline.window_M_img)
 
-	plt.subplot(height,width,2)
+	plt.subplot(height,width,4)
 	plt.title('Small-sized Boxes')
 	plt.imshow(pipeline.window_S_img)
 	#plt.imsave('./output/small_boxes.png', pipeline.window_S_img)
@@ -169,7 +169,7 @@ def imageProcessing(image, svc, X_scaler, settings):
 
 # Use the pipeline to compile a video.
 def videoProcessing(clip, svc, X_scaler, settings):
-	clip = VideoFileClip('./test_videos/project_video.mp4')#.subclip(5,10)
+	clip = VideoFileClip('./test_videos/project_video.mp4').subclip(5,10)
 	output_handle = './output/bboxes.mp4'
 	output_stream = clip.fl_image(lambda frame: pipeline(frame, svc, X_scaler, settings))
 	output_stream.write_videofile(output_handle, audio=False)

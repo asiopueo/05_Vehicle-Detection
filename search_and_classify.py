@@ -119,11 +119,11 @@ def search_windows(img, windows, boxscale, clf, scaler, settings):
 	hot_windows = []
 
 	for window in windows:
-		window = ((int(window[0][0]//boxscale), int(window[0][1]//boxscale)), (int(window[1][0]//boxscale), int(window[1][1]//boxscale)) )
+		window_tmp = ((int(window[0][0]//boxscale), int(window[0][1]//boxscale)), (int(window[1][0]//boxscale), int(window[1][1]//boxscale)) )
 		
-		test_img = img[window[0][1]:window[1][1], window[0][0]:window[1][0]]
+		test_img = img[window_tmp[0][1]:window_tmp[1][1], window_tmp[0][0]:window_tmp[1][0]]
 		
-		window_features = get_all_features(test_img, settings, image_hog_feats, window)
+		window_features = get_all_features(test_img, settings, image_hog_feats, window_tmp)
 		window_features = scaler.transform(window_features.reshape(1, -1))
 
 		prediction = clf.predict(window_features)
