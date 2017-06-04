@@ -73,7 +73,7 @@ def pipeline(img, clf, scaler, settings):
 
 	#pipeline.windows_L = sliding_window(img, x_start_stop=[None,None], y_start_stop=[450,None], xy_window=(128,128), xy_overlap=(0.5,0.5))
 	#pipeline.windows_M = sliding_window(img, x_start_stop=[None,None], y_start_stop=[336,None], xy_window=(96,96), xy_overlap=(0.5,0.5))
-	pipeline.windows_S = sliding_window(img, x_start_stop=[None,None], y_start_stop=[336,None], xy_window=(64,64), xy_overlap=(0.5,0.5), pix_per_cell=8)
+	pipeline.windows_S = sliding_window(img, x_start_stop=[None,None], y_start_stop=[336,None], xy_window=(64,64), xy_overlap=(0.75,0.75), pix_per_cell=8)
 
 	#pipeline.window_L_img = draw_boxes(img, pipeline.windows_L, color=(0,0,255), thick=3)
 	#pipeline.window_M_img = draw_boxes(img, pipeline.windows_M, color=(0,255,0), thick=3)
@@ -92,8 +92,8 @@ def pipeline(img, clf, scaler, settings):
 	
 	pipeline.buffer.appendleft(heatmap)
 	heatmap = sum(pipeline.buffer)
-	print(heatmap.max())
-	pipeline.heatmap = apply_threshold(heatmap, 0)#hat funktioniert: 30
+	print('Absolute maximum value of heatmap:', heatmap.max())
+	pipeline.heatmap = apply_threshold(heatmap, 10)#hat funktioniert: 30
 
 	# Draw and count labeled boxes here:
 	pipeline.labels = label(pipeline.heatmap)
@@ -123,9 +123,9 @@ def imageProcessing(image, svc, X_scaler, settings):
 	#plt.imshow(pipeline.buffer[0])
 	#plt.imsave('./output/heatmap.png', pipeline.buffer[0])
 
-	#plt.subplot(height,width,2)
-	#plt.title('Large-sized Boxes')
-	#plt.imshow(pipeline.window_L_img)
+	plt.subplot(height,width,2)
+	plt.title('Large-sized Boxes')
+	plt.imshow(pipeline.window_L_img)
 	#plt.imsave('./output/large_boxes.png', pipeline.window_L_img)
 
 	#plt.subplot(height,width,2)
@@ -133,9 +133,9 @@ def imageProcessing(image, svc, X_scaler, settings):
 	#plt.imshow(pipeline.window_M_img)
 	#plt.imsave('./output/medium_boxes.png', pipeline.window_M_img)
 
-	plt.subplot(height,width,2)
-	plt.title('Small-sized Boxes')
-	plt.imshow(pipeline.window_S_img)
+	#plt.subplot(height,width,2)
+	#plt.title('Small-sized Boxes')
+	#plt.imshow(pipeline.window_S_img)
 	#plt.imsave('./output/small_boxes.png', pipeline.window_S_img)
 
 	#plt.subplot(height,width,6)

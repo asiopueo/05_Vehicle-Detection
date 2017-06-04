@@ -63,6 +63,8 @@ def subsample_hog_features(image_hog_feats, window, settings):
 
 	else:
 		hog_features = image_hog_feats[cell_start_y:cell_end_y , cell_start_x:cell_end_x , :, :, :]
+		#print(hog_features.shape)
+
 
 	return hog_features
 
@@ -112,8 +114,7 @@ def get_all_features(img, settings, image_hog_feats=None, window=None):
 def search_windows(img, windows, clf, scaler, settings):
 
 	image_hog_feats = hog(img[:,:,2], orientations=settings.orient, pixels_per_cell=(settings.pix_per_cell, settings.pix_per_cell), cells_per_block=(settings.cell_per_block, settings.cell_per_block), transform_sqrt=True, visualise=False, feature_vector=False)
-	print (image_hog_feats.shape)
-
+	
 	hot_windows = []
 
 	for window in windows:
