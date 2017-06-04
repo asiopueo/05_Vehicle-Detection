@@ -16,27 +16,6 @@ from sklearn.model_selection import train_test_split
 
 
 
-
-def bin_spatial(img, color_space='RGB', size=(32,32)):
-	if color_space != 'RGB':
-		if color_space == 'HSV':
-			feature_image = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
-		elif color_space == 'LUV':
-			feature_image = cv2.cvtColor(img, cv2.COLOR_RGB2LUV)
-		elif color_space == 'HLS':
-			feature_image = cv2.cvtColor(img, cv2.COLOR_RGB2HLS)
-		elif color_space == 'YUV':
-			feature_image = cv2.cvtColor(img, cv2.COLOR_RGB2YUV)
-		elif color_space == 'YCrCb':
-			feature_image = cv2.cvtColor(img, cv2.COLOR_RGB2YCrCb)
-	else:
-		feature_image = np.copy(img)
-
-	features = cv2.resize(feature_image, size).ravel()
-
-	return features
-
-
 # Define a function to compute color histogram features 
 # NEED TO CHANGE bins_range if reading .png files with mpimg!
 def color_hist(img, nbins=32, bins_range=(0, 256)):
@@ -50,19 +29,48 @@ def color_hist(img, nbins=32, bins_range=(0, 256)):
     return hist_features
 
 
-def get_hog_features(img, orient, pix_per_cell, cell_per_block, vis=False, feature_vec=True):
 
-    if vis == True:
-        features, hog_image = hog(img, orientations=orient, pixels_per_cell=(pix_per_cell, pix_per_cell), cells_per_block=(cell_per_block, cell_per_block), transform_sqrt=True, visualise=vis, feature_vector=feature_vec)
-        return features, hog_image
+def derive_hog_features(img, settings):
+	if settings.hog_channel == 'ALL':
+		hog_features = []
+		for channel in range(feature_image.shape[2]):
+			hog_features.extend( hog(img[:, :, channel], orientations=settings.orient, pixels_per_cell=(settings.pix_per_cell, settings.pix_per_cell), cells_per_block=(settings.cell_per_block, settings.cell_per_block), transform_sqrt=True, visualise=False, feature_vector=False) )
+			
+		hog_features = np.ravel(hog_features)
 
-    else:      
-        features = hog(img, orientations=orient, pixels_per_cell=(pix_per_cell, pix_per_cell), cells_per_block=(cell_per_block, cell_per_block), transform_sqrt=True, visualise=vis, feature_vector=feature_vec)
-        return features
+	else:
+		hog_features = hog(img[:,:,settings.hog_channel], orientations=settings.orient, pixels_per_cell=(settings.pix_per_cell, settings.pix_per_cell), cells_per_block=(settings.cell_per_block, settings.cell_per_block), transform_sqrt=True, visualise=False, feature_vector=False)
+
+	return hog_features
 
 
 
-def img_features(img, settings):
+# Probleme mit x<->y beachten!
+def subsample_hog_features(image_hog_feats, window, settings):
+	((sx, sy), (ex, ey)) = window
+	cell_start_x = sx//settings.pix_per_cell
+	cell_end_x = ex//settings.pix_per_cell-1
+	cell_start_y = sy//settings.pix_per_cell 
+	cell_end_y = ey//settings.pix_per_cell-1
+
+	#print (image_hog_feats.shape)
+	if settings.hog_channel == 'ALL':
+		hog_features = []
+		for channel in range(feature_image.shape[2]):
+			hog_features.extend( image_hog_feats[channel, cell_start_x:cell_end_x , cell_start_y:cell_end_y , :, :, :] )
+			
+		hog_features = np.ravel(hog_features)
+
+	else:
+		hog_features = image_hog_feats[cell_start_y:cell_end_y , cell_start_x:cell_end_x , :, :, :]
+
+	return hog_features
+
+
+
+
+def get_all_features(img, settings, image_hog_feats=None, window=None):
+
 	img_features=[]
 
 	if settings.color_space != 'RGB':
@@ -79,7 +87,7 @@ def img_features(img, settings):
 	else: feature_image = np.copy(img) 
 
 	if settings.spatial_feat == True:
-		spatial_features = bin_spatial(feature_image, size=settings.spatial_size)
+		spatial_features = cv2.resize(feature_image, settings.spatial_size).ravel()
 		img_features.append(spatial_features)
 
 	if settings.hist_feat == True:
@@ -87,42 +95,35 @@ def img_features(img, settings):
 		img_features.append(hist_features)
 
 	if settings.hog_feat == True:
-		if settings.hog_channel == 'ALL':
-			hog_features = []
-			for channel in range(feature_image.shape[2]):
-				hog_features.extend( get_hog_features(feature_image[:,:,channel], settings.orient, settings.pix_per_cell, settings.cell_per_block, vis=False, feature_vec=True) )
-			hog_features = np.ravel(hog_features) 
+		if (image_hog_feats!=None) and (window!=None):
+			hog_features = subsample_hog_features(image_hog_feats, window, settings)
+			hog_features = hog_features.reshape(-1)
 		else:
-			hog_features = get_hog_features(feature_image[:,:,settings.hog_channel], settings.orient, settings.pix_per_cell, settings.cell_per_block, vis=False, feature_vec=True)
-
+			hog_features = derive_hog_features(img, settings)
+			hog_features = hog_features.reshape(-1)
+			
 		img_features.append(hog_features)
 
 	return np.concatenate(img_features)
-
-
-def subsample(img_feats, window, settings):
-	
-	window_feat = img_feats[:,:,:,:,:]
-
-	return
 
 
 
 
 def search_windows(img, windows, clf, scaler, settings):
 
-	img_feats = img_features(img, settings)
-	img_feats = scaler.transform(img_feats.reshape(1, -1))
+	image_hog_feats = hog(img[:,:,2], orientations=settings.orient, pixels_per_cell=(settings.pix_per_cell, settings.pix_per_cell), cells_per_block=(settings.cell_per_block, settings.cell_per_block), transform_sqrt=True, visualise=False, feature_vector=False)
+	print (image_hog_feats.shape)
 
 	hot_windows = []
+
 	for window in windows:
 		test_img = cv2.resize(img[window[0][1]:window[1][1], window[0][0]:window[1][0]], (64, 64))      
 		
-		window_features = subsample(img_feats, window)
+		window_features = get_all_features(test_img, settings, image_hog_feats, window)
 		window_features = scaler.transform(window_features.reshape(1, -1))
 
 		prediction = clf.predict(window_features)
-
+		
 		if prediction == 1:
 			hot_windows.append(window)
 
@@ -131,14 +132,12 @@ def search_windows(img, windows, clf, scaler, settings):
 
 
 
-
 def extract_features(imgs, settings):
-
 	features = []
 
 	for file in imgs:
-		image = mpimg.imread(file)
-		single_features = img_features(image, settings)
+		img = mpimg.imread(file)
+		single_features = get_all_features(img, settings)
 		features.append(single_features)
 
 	return features

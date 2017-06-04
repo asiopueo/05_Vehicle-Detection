@@ -21,7 +21,6 @@ def sliding_window(img, x_start_stop=[None,None], y_start_stop=[None,None], xy_w
 		y_start_stop[1] = img.shape[0]
  
 
-
 	x_start_stop[0] = x_start_stop[0] // pix_per_cell
 	x_start_stop[1] = x_start_stop[1] // pix_per_cell
 	y_start_stop[0] = y_start_stop[0] // pix_per_cell
@@ -37,7 +36,7 @@ def sliding_window(img, x_start_stop=[None,None], y_start_stop=[None,None], xy_w
 	nx_buffer = np.int( (xy_window[0]*(xy_overlap[0]))//pix_per_cell )
 	ny_buffer = np.int( (xy_window[1]*(xy_overlap[1]))//pix_per_cell )
 
-	nx_windows = np.int( (nx_cells_span-nx_buffer)/nx_cells_per_step ) 
+	nx_windows = np.int( (nx_cells_span-nx_buffer)/nx_cells_per_step )  
 	ny_windows = np.int( (ny_cells_span-ny_buffer)/ny_cells_per_step ) 
 	
 	window_list=[]
