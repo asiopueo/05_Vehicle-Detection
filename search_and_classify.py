@@ -111,14 +111,17 @@ def get_all_features(img, settings, image_hog_feats=None, window=None):
 
 
 
-def search_windows(img, windows, clf, scaler, settings):
+def search_windows(img, windows, boxscale, clf, scaler, settings):
 
+	img = cv2.resize(img[:,:,:], (int(img.shape[1]//boxscale),int(img.shape[0]//boxscale)) )
 	image_hog_feats = hog(img[:,:,2], orientations=settings.orient, pixels_per_cell=(settings.pix_per_cell, settings.pix_per_cell), cells_per_block=(settings.cell_per_block, settings.cell_per_block), transform_sqrt=True, visualise=False, feature_vector=False)
 	
 	hot_windows = []
 
 	for window in windows:
-		test_img = cv2.resize(img[window[0][1]:window[1][1], window[0][0]:window[1][0]], (64, 64))      
+		window = ((int(window[0][0]//boxscale), int(window[0][1]//boxscale)), (int(window[1][0]//boxscale), int(window[1][1]//boxscale)) )
+		
+		test_img = img[window[0][1]:window[1][1], window[0][0]:window[1][0]]
 		
 		window_features = get_all_features(test_img, settings, image_hog_feats, window)
 		window_features = scaler.transform(window_features.reshape(1, -1))
