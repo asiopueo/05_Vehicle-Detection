@@ -4,6 +4,38 @@
 		"selected_items":
 		[
 			[
+				"sea",
+				"search"
+			],
+			[
+				"searc",
+				"search_windows"
+			],
+			[
+				"image",
+				"image_hog_feats"
+			],
+			[
+				"win",
+				"window"
+			],
+			[
+				"windo",
+				"window_features"
+			],
+			[
+				"feat",
+				"features"
+			],
+			[
+				"hog",
+				"hog_features"
+			],
+			[
+				"wind",
+				"windows_L"
+			],
+			[
 				"heat",
 				"heatmap"
 			],
@@ -16,16 +48,8 @@
 				"extract_features"
 			],
 			[
-				"win",
-				"windows2"
-			],
-			[
 				"apply",
 				"apply_threshold"
-			],
-			[
-				"feat",
-				"feature_image"
 			],
 			[
 				"non",
@@ -70,10 +94,6 @@
 			[
 				"imagre",
 				"image_bgr"
-			],
-			[
-				"image",
-				"imageRGB"
 			],
 			[
 				"sobe",
@@ -139,8 +159,7 @@
 			"file": "search_and_classify.py",
 			"settings":
 			{
-				"buffer_size": 4385,
-				"encoding": "UTF-8",
+				"buffer_size": 4991,
 				"line_ending": "Unix"
 			}
 		},
@@ -148,7 +167,7 @@
 			"file": "sliding_window.py",
 			"settings":
 			{
-				"buffer_size": 1744,
+				"buffer_size": 2186,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -157,25 +176,7 @@
 			"file": "main.py",
 			"settings":
 			{
-				"buffer_size": 7265,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "hog.py",
-			"settings":
-			{
-				"buffer_size": 1376,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "car_not_car.py",
-			"settings":
-			{
-				"buffer_size": 585,
+				"buffer_size": 7522,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -213,12 +214,14 @@
 	},
 	"file_history":
 	[
+		"/home/martin/workspace/sdc/05_Vehicle-Detection/search_and_classify.py",
+		"/home/martin/workspace/sdc/05_Vehicle-Detection/hog.py",
+		"/home/martin/workspace/sdc/05_Vehicle-Detection/car_not_car.py",
 		"/home/martin/workspace/sdc/05_Vehicle-Detection/explore.py",
 		"/home/martin/workspace/sdc/05_Vehicle-Detection/extract.py",
 		"/home/martin/workspace/sdc/05_Vehicle-Detection/labels.py",
 		"/home/martin/workspace/sdc/05_Vehicle-Detection/combine.py",
 		"/home/martin/workspace/sdc/05_Vehicle-Detection/spatial_bin.py",
-		"/home/martin/workspace/sdc/05_Vehicle-Detection/hog.py",
 		"/home/martin/workspace/sdc/05_Vehicle-Detection/main.py",
 		"/home/martin/workspace/sdc/04_Advanced-Lane-Lines/sdc4.sublime-workspace",
 		"/home/martin/workspace/sdc/04_Advanced-Lane-Lines/main.py",
@@ -279,6 +282,14 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"option",
+			"feature vec",
+			"get_hog",
+			"get_h",
+			"bin_spat",
+			"bin_soat",
+			"spatial_s",
+			"extract_",
 			"extrac",
 			"label",
 			"y_start",
@@ -326,7 +337,7 @@
 	"groups":
 	[
 		{
-			"selected": 3,
+			"selected": 2,
 			"sheets":
 			[
 				{
@@ -335,73 +346,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 4385,
+						"buffer_size": 4991,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3255,
-								3255
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python/Python.sublime-syntax",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 1960.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "sliding_window.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1744,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								679,
-								679
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python/Python.sublime-syntax",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 560.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "main.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 7265,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								6667,
-								6667
+								0,
+								0
 							]
 						],
 						"settings":
@@ -417,20 +370,20 @@
 					"type": "text"
 				},
 				{
-					"buffer": 3,
-					"file": "hog.py",
+					"buffer": 1,
+					"file": "sliding_window.py",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1376,
+						"buffer_size": 2186,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1123,
-								1123
+								2186,
+								2186
 							]
 						],
 						"settings":
@@ -439,27 +392,27 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 436.0,
+						"translation.y": 60.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 2,
 					"type": "text"
 				},
 				{
-					"buffer": 4,
-					"file": "car_not_car.py",
+					"buffer": 2,
+					"file": "main.py",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 585,
+						"buffer_size": 7522,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								133,
-								133
+								5022,
+								5022
 							]
 						],
 						"settings":
@@ -468,10 +421,10 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 3000.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 4,
+					"stack_index": 0,
 					"type": "text"
 				}
 			]

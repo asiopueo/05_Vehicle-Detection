@@ -169,7 +169,7 @@ def imageProcessing(image, svc, X_scaler, settings):
 
 # Use the pipeline to compile a video.
 def videoProcessing(clip, svc, X_scaler, settings):
-	clip = VideoFileClip('./test_videos/project_video.mp4').subclip(5,10)
+	clip = VideoFileClip('./test_videos/project_video.mp4')#.subclip(5,10)
 	output_handle = './output/bboxes.mp4'
 	output_stream = clip.fl_image(lambda frame: pipeline(frame, svc, X_scaler, settings))
 	output_stream.write_videofile(output_handle, audio=False)
