@@ -20,6 +20,9 @@ from search_and_classify import search_windows, extract_features
 from moviepy.editor import VideoFileClip
 from collections import deque
 
+from functools import partial
+import multiprocessing
+
 
 class Settings:
 	def __init__(self):
@@ -29,7 +32,7 @@ class Settings:
 		self.orient = 9  				# HOG orientations
 		self.pix_per_cell = 8 			# HOG pixels per cell
 		self.cell_per_block = 2 		# HOG cells per block
-		self.hog_channel = 0 			# Can be 0, 1, 2, or "ALL"
+		self.hog_channel = 2			# Can be 0, 1, 2, or "ALL"
 		self.spatial_feat = True 		# Spatial features on or off
 		self.hist_feat = True 			# Histogram features on or off
 		self.hog_feat = True 			# HOG features on or off
@@ -70,32 +73,42 @@ def pipeline(img, clf, scaler, settings):
 	# We will use three different sizes of sliding windows:
 	# Their start and stop poitions will be determined at the later stage of pipeline development.
 
-	pipeline.windows_L = sliding_window(img, x_start_stop=[None,None], y_start_stop=[360,None], xy_window=(128,128), xy_overlap=(0.75,0.75))
-	pipeline.windows_M = sliding_window(img, x_start_stop=[None,None], y_start_stop=[360,None], xy_window=(96,96), xy_overlap=(0.75,0.75))
-	pipeline.windows_S = sliding_window(img, x_start_stop=[None,None], y_start_stop=[360,None], xy_window=(64,64), xy_overlap=(0.75,0.75))
-		
-	pipeline.window_L_img = draw_boxes(img, pipeline.windows_L, color=(0,0,255), thick=3)
-	pipeline.window_M_img = draw_boxes(img, pipeline.windows_M, color=(0,255,0), thick=3)
-	pipeline.window_S_img = draw_boxes(img, pipeline.windows_S, color=(255,0,0), thick=3)
+	windows_L = sliding_window(img, x_start_stop=[None,None], y_start_stop=[336,592], xy_window=(128,128), xy_overlap=(0.75,0.75))
+	windows_M = sliding_window(img, x_start_stop=[None,None], y_start_stop=[336,592], xy_window=(96,96), xy_overlap=(0.75,0.75))
+	windows_S = sliding_window(img, x_start_stop=[None,None], y_start_stop=[336,592], xy_window=(64,64), xy_overlap=(0.75,0.75), pix_per_cell=8)
+
+	pipeline.window_L_img = draw_boxes(img, windows_L, color=(0,0,255), thick=3)
+	pipeline.window_M_img = draw_boxes(img, windows_M, color=(0,255,0), thick=3)
+	pipeline.window_S_img = draw_boxes(img, windows_S, color=(255,0,0), thick=3)
 
 	# We need to apply matching algorithm here:
 	hot_boxes = []
-	hot_boxes.append(search_windows(img, pipeline.windows_L, clf, scaler, settings))
-	hot_boxes.append(search_windows(img, pipeline.windows_M, clf, scaler, settings))
-	hot_boxes.append(search_windows(img, pipeline.windows_S, clf, scaler, settings))
+	search = partial(search_windows, img, clf=clf, scaler=scaler, settings=settings)
+
+	t_start = time.time()
+	pool = multiprocessing.Pool()
+	hot_boxes = pool.starmap(search, [(windows_S, 1), (windows_M, 1.5), (windows_L, 2)] )
+	pool.close()
+	hot_boxes = [item for sublist in hot_boxes for item in sublist]
+	
+
+	#hot_boxes = search(windows_S, boxscale=1)
+	#hot_boxes = search(windows_M, boxscale=1.5)
+	#hot_boxes = search(windows_L, boxscale=2)
+	
+
+	t_end = time.time()
+	print(round(t_start-t_end, 2), 'Seconds to determine hot boxes...')
+
+
 
 	heatmap = np.zeros_like(img)	
-	heatmap = add_heat(heatmap, hot_boxes[0])
-	heatmap = add_heat(heatmap, hot_boxes[1])
-	heatmap = add_heat(heatmap, hot_boxes[2])
+	heatmap = add_heat(heatmap, hot_boxes)
 	
 	pipeline.buffer.appendleft(heatmap)
-	
 	heatmap = sum(pipeline.buffer)
-	
-	print(heatmap.max())
-
-	pipeline.heatmap = apply_threshold(heatmap, 30)#hat funktioniert: 50
+	print('Absolute maximum value of heatmap:', heatmap.max())
+	pipeline.heatmap = apply_threshold(heatmap, 30)#hat funktioniert: 30
 
 	# Draw and count labeled boxes here:
 	pipeline.labels = label(pipeline.heatmap)
@@ -107,10 +120,10 @@ pipeline.flag = 0
 
 # Use the pipeline to process only a single image.  Useful for tweaking parameters.
 def imageProcessing(image, svc, X_scaler, settings):
-	height = 3
+	height = 2
 	width = 2
 		
-	image = mpimg.imread('test_images/test3.jpg')
+	image = mpimg.imread('test_images/test1.jpg')
 
 	result = pipeline(image, svc, X_scaler, settings)
 
@@ -120,30 +133,30 @@ def imageProcessing(image, svc, X_scaler, settings):
 	plt.imshow(image)
 	plt.title('Original Input Image')
 	
-	plt.subplot(height,width,2)
-	plt.title('Heatmap')
-	plt.imshow(pipeline.buffer[0])
-	plt.imsave('./output/heatmap.png', pipeline.buffer[0])
+	#plt.subplot(height,width,2)
+	#plt.title('Heatmap')
+	#plt.imshow(pipeline.buffer[0])
+	#plt.imsave('./output/heatmap.png', pipeline.buffer[0])
 
-	plt.subplot(height,width,3)
+	plt.subplot(height,width,2)
 	plt.title('Large-sized Boxes')
 	plt.imshow(pipeline.window_L_img)
-	plt.imsave('./output/large_boxes.png', pipeline.window_L_img)
+	#plt.imsave('./output/large_boxes.png', pipeline.window_L_img)
 
-	plt.subplot(height,width,4)
+	plt.subplot(height,width,3)
 	plt.title('Medium-sized Boxes')
 	plt.imshow(pipeline.window_M_img)
-	plt.imsave('./output/medium_boxes.png', pipeline.window_M_img)
+	#plt.imsave('./output/medium_boxes.png', pipeline.window_M_img)
 
-	plt.subplot(height,width,5)
+	plt.subplot(height,width,4)
 	plt.title('Small-sized Boxes')
 	plt.imshow(pipeline.window_S_img)
-	plt.imsave('./output/small_boxes.png', pipeline.window_S_img)
+	#plt.imsave('./output/small_boxes.png', pipeline.window_S_img)
 
-	plt.subplot(height,width,6)
-	plt.title('Resulting Image')
-	plt.imshow(result)
-	plt.imsave('./output/resulting_image.png', result)
+	#plt.subplot(height,width,6)
+	#plt.title('Resulting Image')
+	#plt.imshow(result)
+	#plt.imsave('./output/resulting_image.png', result)
 
 	plt.tight_layout()
 
@@ -211,7 +224,7 @@ def main(argv):
 	rand_state = np.random.randint(0, 100)
 	X_train, X_test, y_train, y_test = train_test_split(scaled_X, y, test_size=0.2, random_state=rand_state)
 
-	print('Using:', settings.orient, 'orientations', settings.pix_per_cell, 'pixels per cell and', settings.cell_per_block,'cells per block')
+	print('Using:', settings.orient, 'orientations, ', settings.pix_per_cell, 'pixels per cell, and', settings.cell_per_block,'cells per block')
 	print('Feature vector length:', len(X_train[0]))
  
 	# We first train a HOG classifier.  We are doing this on-the-fly, without saving the results.

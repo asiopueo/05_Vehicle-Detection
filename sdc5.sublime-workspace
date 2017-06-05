@@ -4,6 +4,38 @@
 		"selected_items":
 		[
 			[
+				"sea",
+				"search"
+			],
+			[
+				"searc",
+				"search_windows"
+			],
+			[
+				"image",
+				"image_hog_feats"
+			],
+			[
+				"win",
+				"window"
+			],
+			[
+				"windo",
+				"window_features"
+			],
+			[
+				"feat",
+				"features"
+			],
+			[
+				"hog",
+				"hog_features"
+			],
+			[
+				"wind",
+				"windows_L"
+			],
+			[
 				"heat",
 				"heatmap"
 			],
@@ -16,16 +48,8 @@
 				"extract_features"
 			],
 			[
-				"win",
-				"windows2"
-			],
-			[
 				"apply",
 				"apply_threshold"
-			],
-			[
-				"feat",
-				"feature_image"
 			],
 			[
 				"non",
@@ -70,10 +94,6 @@
 			[
 				"imagre",
 				"image_bgr"
-			],
-			[
-				"image",
-				"imageRGB"
 			],
 			[
 				"sobe",
@@ -139,8 +159,7 @@
 			"file": "search_and_classify.py",
 			"settings":
 			{
-				"buffer_size": 4385,
-				"encoding": "UTF-8",
+				"buffer_size": 4991,
 				"line_ending": "Unix"
 			}
 		},
@@ -148,7 +167,7 @@
 			"file": "sliding_window.py",
 			"settings":
 			{
-				"buffer_size": 1744,
+				"buffer_size": 2186,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -157,6 +176,7 @@
 			"file": "main.py",
 			"settings":
 			{
+<<<<<<< HEAD
 				"buffer_size": 6977,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
@@ -176,6 +196,9 @@
 			"settings":
 			{
 				"buffer_size": 585,
+=======
+				"buffer_size": 7522,
+>>>>>>> multiprocessing
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -213,12 +236,14 @@
 	},
 	"file_history":
 	[
+		"/home/martin/workspace/sdc/05_Vehicle-Detection/search_and_classify.py",
+		"/home/martin/workspace/sdc/05_Vehicle-Detection/hog.py",
+		"/home/martin/workspace/sdc/05_Vehicle-Detection/car_not_car.py",
 		"/home/martin/workspace/sdc/05_Vehicle-Detection/explore.py",
 		"/home/martin/workspace/sdc/05_Vehicle-Detection/extract.py",
 		"/home/martin/workspace/sdc/05_Vehicle-Detection/labels.py",
 		"/home/martin/workspace/sdc/05_Vehicle-Detection/combine.py",
 		"/home/martin/workspace/sdc/05_Vehicle-Detection/spatial_bin.py",
-		"/home/martin/workspace/sdc/05_Vehicle-Detection/hog.py",
 		"/home/martin/workspace/sdc/05_Vehicle-Detection/main.py",
 		"/home/martin/workspace/sdc/04_Advanced-Lane-Lines/sdc4.sublime-workspace",
 		"/home/martin/workspace/sdc/04_Advanced-Lane-Lines/main.py",
@@ -279,6 +304,14 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"option",
+			"feature vec",
+			"get_hog",
+			"get_h",
+			"bin_spat",
+			"bin_soat",
+			"spatial_s",
+			"extract_",
 			"extrac",
 			"label",
 			"y_start",
@@ -326,7 +359,7 @@
 	"groups":
 	[
 		{
-			"selected": 3,
+			"selected": 2,
 			"sheets":
 			[
 				{
@@ -335,15 +368,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 4385,
+						"buffer_size": 4991,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3255,
-								3255
+								0,
+								0
 							]
 						],
 						"settings":
@@ -352,10 +385,17 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
+<<<<<<< HEAD
 						"translation.y": 1300.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 2,
+=======
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+>>>>>>> multiprocessing
 					"type": "text"
 				},
 				{
@@ -364,15 +404,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1744,
+						"buffer_size": 2186,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								679,
-								679
+								2186,
+								2186
 							]
 						],
 						"settings":
@@ -381,7 +421,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 560.0,
+						"translation.y": 60.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 4,
@@ -393,15 +433,24 @@
 					"semi_transient": false,
 					"settings":
 					{
+<<<<<<< HEAD
 						"buffer_size": 6977,
+=======
+						"buffer_size": 7522,
+>>>>>>> multiprocessing
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
+<<<<<<< HEAD
 								2621,
 								2621
+=======
+								5022,
+								5022
+>>>>>>> multiprocessing
 							]
 						],
 						"settings":
@@ -410,6 +459,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
+<<<<<<< HEAD
 						"translation.y": 1080.0,
 						"zoom_level": 1.0
 					},
@@ -440,10 +490,14 @@
 						},
 						"translation.x": 0.0,
 						"translation.y": 16.0,
+=======
+						"translation.y": 3000.0,
+>>>>>>> multiprocessing
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
 					"type": "text"
+<<<<<<< HEAD
 				},
 				{
 					"buffer": 4,
@@ -473,6 +527,8 @@
 					},
 					"stack_index": 1,
 					"type": "text"
+=======
+>>>>>>> multiprocessing
 				}
 			]
 		}
