@@ -6,6 +6,7 @@ import PIL
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 
+from settings import settings
 
 
 # Not quite finished!

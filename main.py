@@ -1,4 +1,4 @@
-import sys
+import sys, os
 import getopt
 import glob
 import time
@@ -24,25 +24,20 @@ from functools import partial
 import multiprocessing
 
 
-class Settings:
-	def __init__(self):
-		self.color_space = 'RGB' 		# Can be RGB, HSV, LUV, HLS, YUV, YCrCb
-		self.spatial_size = (32, 32) 	# Spatial binning dimensions
-		self.hist_bins = 32    			# Number of histogram bins
-		self.orient = 9  				# HOG orientations
-		self.pix_per_cell = 8 			# HOG pixels per cell
-		self.cell_per_block = 2 		# HOG cells per block
-		self.hog_channel = 2			# Can be 0, 1, 2, or "ALL"
-		self.spatial_feat = True 		# Spatial features on or off
-		self.hist_feat = True 			# Histogram features on or off
-		self.hog_feat = True 			# HOG features on or off
+###############################
+# Import configuration module #
+###############################
+from settings import settings
+
+
+
 
 
 
 
 def add_heat(heat, bbox_list):
 	for box in bbox_list:
-		heat[box[0][1]:box[1][1], box[0][0]:box[1][0]] += 1# hat funktioniert: 3
+		heat[box[0][1]:box[1][1], box[0][0]:box[1][0]] += 1
 	return heat
 
 
@@ -53,20 +48,28 @@ def apply_threshold(heatmap, threshold):
 
 def draw_labeled_boxes(img, labels):
 	for car_number in range(1, labels[1]+1):
-		nonzero = (labels[0] == car_number).nonzero()
+		A = (labels[0] == car_number)
+		B = A*pipeline.heatmap
+		
+		print(B.max())		
+		
+		nonzero = A.nonzero()
 		nonzeroy = np.array(nonzero[0])
 		nonzerox = np.array(nonzero[1])
 
 		bbox = ((np.min(nonzerox), np.min(nonzeroy)), (np.max(nonzerox),np.max(nonzeroy)))
 		cv2.rectangle(img, bbox[0], bbox[1], (0,0,255), 6)
 
+		#
+
+
 	return img
 
 
-def pipeline(img, clf, scaler, settings):
+def pipeline(img, clf, scaler):
 
 	if pipeline.flag == 0:
-		pipeline.buffer = deque(6*[],6)
+		pipeline.buffer = deque(12*[],12)
 		pipeline.flag = 1
 	
 
@@ -83,7 +86,7 @@ def pipeline(img, clf, scaler, settings):
 
 	# We need to apply matching algorithm here:
 	hot_boxes = []
-	search = partial(search_windows, img, clf=clf, scaler=scaler, settings=settings)
+	search = partial(search_windows, img, clf=clf, scaler=scaler)
 
 	t_start = time.time()
 	pool = multiprocessing.Pool()
@@ -91,15 +94,12 @@ def pipeline(img, clf, scaler, settings):
 	pool.close()
 	hot_boxes = [item for sublist in hot_boxes for item in sublist]
 	
-
 	#hot_boxes = search(windows_S, boxscale=1)
 	#hot_boxes = search(windows_M, boxscale=1.5)
 	#hot_boxes = search(windows_L, boxscale=2)
 	
-
 	t_end = time.time()
-	print(round(t_start-t_end, 2), 'Seconds to determine hot boxes...')
-
+	print(round(t_end-t_start, 2), 'Seconds to determine hot boxes...')
 
 
 	heatmap = np.zeros_like(img)	
@@ -108,7 +108,7 @@ def pipeline(img, clf, scaler, settings):
 	pipeline.buffer.appendleft(heatmap)
 	heatmap = sum(pipeline.buffer)
 	print('Absolute maximum value of heatmap:', heatmap.max())
-	pipeline.heatmap = apply_threshold(heatmap, 30)#hat funktioniert: 30
+	pipeline.heatmap = apply_threshold(heatmap, 0)
 
 	# Draw and count labeled boxes here:
 	pipeline.labels = label(pipeline.heatmap)
@@ -119,13 +119,13 @@ pipeline.flag = 0
 
 
 # Use the pipeline to process only a single image.  Useful for tweaking parameters.
-def imageProcessing(image, svc, X_scaler, settings):
+def imageProcessing(image, svc, X_scaler):
 	height = 2
-	width = 2
+	width = 3
 		
 	image = mpimg.imread('test_images/test1.jpg')
 
-	result = pipeline(image, svc, X_scaler, settings)
+	result = pipeline(image, svc, X_scaler)
 
 	print(pipeline.labels[1], ' cars found.')
 	
@@ -153,9 +153,9 @@ def imageProcessing(image, svc, X_scaler, settings):
 	plt.imshow(pipeline.window_S_img)
 	#plt.imsave('./output/small_boxes.png', pipeline.window_S_img)
 
-	#plt.subplot(height,width,6)
-	#plt.title('Resulting Image')
-	#plt.imshow(result)
+	plt.subplot(height,width,6)
+	plt.title('Resulting Image')
+	plt.imshow(result)
 	#plt.imsave('./output/resulting_image.png', result)
 
 	plt.tight_layout()
@@ -167,10 +167,10 @@ def imageProcessing(image, svc, X_scaler, settings):
 
 
 # Use the pipeline to compile a video.
-def videoProcessing(clip, svc, X_scaler, settings):
+def videoProcessing(clip, svc, X_scaler):
 	clip = VideoFileClip('./test_videos/project_video.mp4')#.subclip(5,10)
 	output_handle = './output/bboxes.mp4'
-	output_stream = clip.fl_image(lambda frame: pipeline(frame, svc, X_scaler, settings))
+	output_stream = clip.fl_image(lambda frame: pipeline(frame, svc, X_scaler))
 	output_stream.write_videofile(output_handle, audio=False)
 	sys.exit()
 
@@ -206,12 +206,9 @@ def main(argv):
 		else:
 			cars.append(image)
 
-	# Initialize parameters
-	settings = Settings()
 
-
-	car_features = extract_features(cars, settings)
-	notcar_features = extract_features(notcars, settings)
+	car_features = extract_features(cars)
+	notcar_features = extract_features(notcars)
 
 	# Preprocessing
 	X = np.vstack((car_features, notcar_features)).astype(np.float64)
@@ -258,10 +255,10 @@ def main(argv):
 	for opt, arg in opts:
 		if opt in ('-i', '--Image'):
 			print('Option: ' + '\'' + arg + '\'')
-			imageProcessing(arg, svc, X_scaler, settings)
+			imageProcessing(arg, svc, X_scaler)
 			
 		elif opt in ('-v', '--Video'):
-			videoProcessing(arg, svc, X_scaler, settings)
+			videoProcessing(arg, svc, X_scaler)
 			
 		elif opt in ('-h', '--help'):
 			usage()
