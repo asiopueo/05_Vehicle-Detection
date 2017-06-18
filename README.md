@@ -134,9 +134,23 @@ The medium scale is located in a ribbon between and .
 
 And finally, the largest scale is located in a ribbon between ?? and ?? px.
 
-<img src="./images/small_boxes.png" width="300">
-<img src="./images/medium_boxes.png" width="300">
-<img src="./images/large_boxes.png" width="300">
+| Class  			| Upper Boundary		| Lower Boundary			|
+|:-----------:|:-----------------:|:-------------------:|
+|	Small				|					px				|					px					|
+|	Medium			|					px				|					px					|
+|	Large				|					px				|					px					|
+
+
+
+Small-sized boxes:<br>
+<img src="./images/small_boxes.png" width="400">
+
+Medium-sized boxes:<br>
+<img src="./images/medium_boxes.png" width="400">
+
+Large-sized boxes:<br>
+<img src="./images/large_boxes.png" width="400">
+
 
 
 Using the 'functions are also objects' in Python, I can easily read them out for tweaking purposes in the `imageProcessing()` function.
@@ -198,12 +212,10 @@ Since the pipeline in our version takes four arguments, I use the `lambda`-metho
 As output, I have made out of curiosity two different videos: One displaying cars with surrounding bounding boxes, and another one displaying the heat map.
 
 The first link provides the reader with the standard bounding boxes:
-
-Here's a [link to my video result](./boundingBoxVideo.mp4)
+[Link to bounding boxes video](./videos/bboxes_14.mp4)
 
 The second link leads to the video with the heat signature:
-
-Here's a [link to my video result](./heatMapVideo.mp4)
+[Link to heatmap video](./videos/bboxes_15.mp4)
 
 One can see that our method for detecting false peresting feature to stabilize the tracking algorithm could be the use of temporal aveositives works quite well.
 
@@ -218,7 +230,7 @@ Here's an example result showing the heatmap from a series of frames of video, t
 
 The following two pictures illustrate the application of the pipeline onto `test1.jpg`, but without any threshold:
 
-<img src="./images/heatmap.png" width="300">
+<img src="./images/heatmap.png" width="600">
 
 Applying the corresponding bounding boxes:
 
@@ -227,10 +239,10 @@ Here is the output of `scipy.ndimage.measurements.label()` on the integrated hea
 
 Here the resulting bounding boxes are drawn onto the last frame in the series:
 
-<img src="./images/resulting_image.png" width="300">
+<img src="./images/resulting_image.png" width="600">
 
 The labels can be read out by `labels[1]` which gived us the
-
+Zt6$&79
 
 
 
