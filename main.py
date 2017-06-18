@@ -86,9 +86,7 @@ def pipeline(img, clf, scaler):
 		pipeline.flag = 1
 	
 
-	# We will use three different sizes of sliding windows:
-	# Their start and stop poitions will be determined at the later stage of pipeline development.
-
+	# We will use three different sizes of sliding windows:.
 	windows_L = sliding_window(img, x_start_stop=[None,None], y_start_stop=[336,592], xy_window=(128,128), xy_overlap=(0.75,0.75))
 	windows_M = sliding_window(img, x_start_stop=[None,None], y_start_stop=[336,592], xy_window=(96,96), xy_overlap=(0.75,0.75))
 	windows_S = sliding_window(img, x_start_stop=[None,None], y_start_stop=[336,592], xy_window=(64,64), xy_overlap=(0.75,0.75), pix_per_cell=8)
@@ -195,15 +193,13 @@ def videoProcessing(clip, svc, X_scaler):
 
 def usage():
 	print('Usage:')
-	print('python main.py')
-	print('python main.py -v [<input_image.jpg>]')
-	print('python main.py --Video <input_video.mp4>')
-	print('python main.py -i [<input_image.jpg>]')
-	print('python main.py --Image <input_image.mp4>')
+	print('\t python main.py')
+	print('\t python main.py -v [<input_video.mp4>]')
+	print('\t python main.py -i [<input_image.jpg>]')
+	return
 
 
-
-def main(argv):
+def init(argv):
 
 	"""
 	# Only using the small set. 
@@ -223,7 +219,7 @@ def main(argv):
 	car_features = extract_features(cars)
 	notcar_features = extract_features(notcars)
 	"""
-	
+	"""
 	car_images = glob.glob('./vehicles/*/*.png')
 	notcar_images = glob.glob('./non-vehicles/*/*.png')
 
@@ -240,8 +236,8 @@ def main(argv):
 	# Preprocessing
 	X = np.vstack((car_features, notcar_features)).astype(np.float64)
 
-	X_scaler = StandardScaler().fit(X)
-	scaled_X = X_scaler.transform(X)
+	init.X_scaler = StandardScaler().fit(X)
+	scaled_X = init.X_scaler.transform(X)
 	y = np.hstack((np.ones(len(car_features)), np.zeros(len(notcar_features))))
 
 
@@ -250,16 +246,21 @@ def main(argv):
 
 	print('Using:', settings.orient, 'orientations, ', settings.pix_per_cell, 'pixels per cell, and', settings.cell_per_block,'cells per block')
 	print('Feature vector length:', len(X_train[0]))
-	 
+	"""
 	# We first train a HOG classifier.  We are doing this on-the-fly, without saving the results.
 	# After we have trained it, we can use the classifier by applying the sliding window search.
 	# This is done in the pipeline.
 
 	
-	svc = LinearSVC()
+	init.svc = LinearSVC()
 	
-	with open('my_classifier.pkl', 'rb') as file_handle:
-		svc = pickle.load(file_handle)
+	with open('classifier.pkl', 'rb') as file_handle:
+		init.svc = pickle.load(file_handle)
+
+	init.X_scaler = StandardScaler()
+
+	with open('scaler.pkl', 'rb') as file_handle:
+		init.X_scaler = pickle.load(file_handle)
 
 	"""
 	print('Start training the classifier...')
@@ -270,8 +271,13 @@ def main(argv):
 	
 	with open('my_classifier.pkl', 'wb') as file_handle:
 		pickle.dump(svc, file_handle)
+	
+	with open('scaler.pkl', 'wb') as file_handle:
+		pickle.dump(init.X_scaler, file_handle)
+	
+	print('Test Accuracy of SVC = ', round(init.svc.score(X_test, y_test), 4))
 	"""
-	print('Test Accuracy of SVC = ', round(svc.score(X_test, y_test), 4))
+	return
 
 
 
@@ -279,12 +285,10 @@ def main(argv):
 
 
 
-
-
-
+if __name__=='__main__':
 
 	try:
-		opts, args = getopt.getopt(argv, 'vih', ['Image=', 'Video=', 'help'])
+		opts, args = getopt.getopt(sys.argv[1:], 'vih', ['help'])
 	except getopt.GetoptError as err:
 		print(err)
 		usage()
@@ -292,30 +296,22 @@ def main(argv):
 
 	for opt, arg in opts:
 		if opt in ('-i', '--Image'):
-			print('Option: ' + '\'' + arg + '\'')
-			imageProcessing(arg, svc, X_scaler)
+			#print('Option: ' + '\'' + arg + '\'')
+			init(sys.argv[1:])
+			imageProcessing(arg, init.svc, init.X_scaler)
 			
 		elif opt in ('-v', '--Video'):
-			videoProcessing(arg, svc, X_scaler)
-			
+			init(sys.argv[1:])
+			videoProcessing(arg, init.svc, init.X_scaler)
+
 		elif opt in ('-h', '--help'):
 			usage()
 			sys.exit()
-			
-		elif opt == '-c':
-			global _tweak
-			_tweak = 1
 
 		else:
 			usage()
 			sys.exit()
-
-
-
-
-
-if __name__=='__main__':
-	main(sys.argv[1:])
+	
 	sys.exit()
 
 

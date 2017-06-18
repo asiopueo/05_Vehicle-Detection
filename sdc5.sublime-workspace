@@ -209,7 +209,7 @@
 			"file": "main.py",
 			"settings":
 			{
-				"buffer_size": 8366,
+				"buffer_size": 8316,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -484,15 +484,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 8366,
+						"buffer_size": 8316,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								6188,
-								6188
+								8059,
+								8059
 							]
 						],
 						"settings":
@@ -501,7 +501,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1780.0,
+						"translation.y": 5156.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
