@@ -4,6 +4,38 @@
 		"selected_items":
 		[
 			[
+				"images",
+				"car_images"
+			],
+			[
+				"output_",
+				"output_handle"
+			],
+			[
+				"glo",
+				"global_hog_feats"
+			],
+			[
+				"fea",
+				"feature_array"
+			],
+			[
+				"colo",
+				"color_conversion"
+			],
+			[
+				"ext",
+				"extract_hog_features"
+			],
+			[
+				"window",
+				"window_features"
+			],
+			[
+				"non",
+				"nonzero"
+			],
+			[
 				"max",
 				"maximum"
 			],
@@ -60,10 +92,6 @@
 				"apply_threshold"
 			],
 			[
-				"non",
-				"nonzeroy"
-			],
-			[
 				"nonzer",
 				"nonzerox"
 			],
@@ -78,10 +106,6 @@
 			[
 				"prin",
 				"printStuff"
-			],
-			[
-				"colo",
-				"color_warp"
 			],
 			[
 				"binary",
@@ -164,10 +188,11 @@
 	"buffers":
 	[
 		{
-			"file": "search_and_classify.py",
+			"file": "classify.py",
 			"settings":
 			{
-				"buffer_size": 4991,
+				"buffer_size": 5052,
+				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
@@ -175,7 +200,7 @@
 			"file": "sliding_window.py",
 			"settings":
 			{
-				"buffer_size": 2186,
+				"buffer_size": 2312,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -184,16 +209,25 @@
 			"file": "main.py",
 			"settings":
 			{
-				"buffer_size": 7806,
+				"buffer_size": 8366,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "test.py",
+			"file": "saver.py",
 			"settings":
 			{
-				"buffer_size": 402,
+				"buffer_size": 1299,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "settings.py",
+			"settings":
+			{
+				"buffer_size": 621,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -231,6 +265,8 @@
 	},
 	"file_history":
 	[
+		"/home/martin/workspace/sdc/05_Vehicle-Detection/test.py",
+		"/home/martin/workspace/sdc/04_Advanced-Lane-Lines/main.py",
 		"/home/martin/workspace/sdc/05_Vehicle-Detection/search_and_classify.py",
 		"/home/martin/workspace/sdc/05_Vehicle-Detection/hog.py",
 		"/home/martin/workspace/sdc/05_Vehicle-Detection/car_not_car.py",
@@ -241,7 +277,6 @@
 		"/home/martin/workspace/sdc/05_Vehicle-Detection/spatial_bin.py",
 		"/home/martin/workspace/sdc/05_Vehicle-Detection/main.py",
 		"/home/martin/workspace/sdc/04_Advanced-Lane-Lines/sdc4.sublime-workspace",
-		"/home/martin/workspace/sdc/04_Advanced-Lane-Lines/main.py",
 		"/home/martin/workspace/sdc/04_Advanced-Lane-Lines/sdc4.sublime-project",
 		"/home/martin/workspace/sdc/04_Advanced-Lane-Lines/composite.py",
 		"/home/martin/workspace/elGamal/main.py",
@@ -299,6 +334,20 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"cPick",
+			"thres",
+			"print",
+			"255",
+			"color_c",
+			"extract_ho",
+			"image",
+			"screen",
+			"feature_image",
+			"settings",
+			"setting",
+			"sett",
+			"settings",
+			"label",
 			"determine",
 			"option",
 			"feature vec",
@@ -360,19 +409,32 @@
 			[
 				{
 					"buffer": 0,
-					"file": "search_and_classify.py",
+					"file": "classify.py",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 4991,
+						"buffer_size": 5052,
 						"regions":
 						{
+							"bookmarks":
+							{
+								"flags": 144,
+								"icon": "bookmark",
+								"regions":
+								[
+									[
+										535,
+										548
+									]
+								],
+								"scope": "bookmarks"
+							}
 						},
 						"selection":
 						[
 							[
-								1782,
-								1782
+								4486,
+								4486
 							]
 						],
 						"settings":
@@ -380,11 +442,11 @@
 							"syntax": "Packages/Python/Python.sublime-syntax",
 							"translate_tabs_to_spaces": false
 						},
-						"translation.x": 0.0,
-						"translation.y": 696.0,
+						"translation.x": -0.0,
+						"translation.y": 1980.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 3,
 					"type": "text"
 				},
 				{
@@ -393,15 +455,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2186,
+						"buffer_size": 2312,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								1856,
+								1856
 							]
 						],
 						"settings":
@@ -413,7 +475,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 4,
 					"type": "text"
 				},
 				{
@@ -422,15 +484,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 7806,
+						"buffer_size": 8366,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3204,
-								3204
+								6188,
+								6188
 							]
 						],
 						"settings":
@@ -439,7 +501,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1618.0,
+						"translation.y": 1780.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
@@ -447,30 +509,60 @@
 				},
 				{
 					"buffer": 3,
-					"file": "test.py",
+					"file": "saver.py",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 402,
+						"buffer_size": 1299,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								12,
-								12
+								1087,
+								1087
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/Python/Python.sublime-syntax"
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 520.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "settings.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 621,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								66,
+								66
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 2,
 					"type": "text"
 				}
 			]
@@ -478,7 +570,7 @@
 	],
 	"incremental_find":
 	{
-		"height": 28.0
+		"height": 36.0
 	},
 	"input":
 	{

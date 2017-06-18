@@ -14,15 +14,23 @@ from sklearn.svm import LinearSVC
 from scipy.ndimage.measurements import label
 from sklearn.model_selection import train_test_split
 
-from sliding_window import *
-from search_and_classify import search_windows, extract_features
-
 from moviepy.editor import VideoFileClip
 from collections import deque
 
 from functools import partial
 import multiprocessing
 
+import pickle
+
+
+
+##############
+# Own module #
+##############
+
+from sliding_window import *
+from classify import extract_search_window_features, extract_features
+from saver import image_saver, video_saver
 
 ###############################
 # Import configuration module #
@@ -46,12 +54,19 @@ def apply_threshold(heatmap, threshold):
 	return heatmap
 
 
+def screenWriter(img, max, position):
+	font = cv2.FONT_HERSHEY_SIMPLEX
+	string = 'Max: '+ str(max)
+	textedImg = cv2.putText(img, text=string, org=position, fontFace=font, fontScale=1., color=(255,255,255), thickness=2, lineType=cv2.LINE_AA, bottomLeftOrigin=False)
+	return textedImg
+
+
 def draw_labeled_boxes(img, labels):
 	for car_number in range(1, labels[1]+1):
 		A = (labels[0] == car_number)
 		B = A*pipeline.heatmap
 		
-		print(B.max())		
+		print('Box number {}:'.format(car_number), B.max())		
 		
 		nonzero = A.nonzero()
 		nonzeroy = np.array(nonzero[0])
@@ -59,9 +74,7 @@ def draw_labeled_boxes(img, labels):
 
 		bbox = ((np.min(nonzerox), np.min(nonzeroy)), (np.max(nonzerox),np.max(nonzeroy)))
 		cv2.rectangle(img, bbox[0], bbox[1], (0,0,255), 6)
-
-		#
-
+		screenWriter(img,B.max(), bbox[0])
 
 	return img
 
@@ -86,29 +99,32 @@ def pipeline(img, clf, scaler):
 
 	# We need to apply matching algorithm here:
 	hot_boxes = []
-	search = partial(search_windows, img, clf=clf, scaler=scaler)
-
+	search = partial(extract_search_window_features, img, clf=clf, scaler=scaler)
+	
 	t_start = time.time()
 	pool = multiprocessing.Pool()
-	hot_boxes = pool.starmap(search, [(windows_S, 1), (windows_M, 1.5), (windows_L, 2)] )
+	hot_boxes = pool.starmap(search, [(windows_S, 1), (windows_M, 1.5)])#, (windows_L, 2)] )
 	pool.close()
 	hot_boxes = [item for sublist in hot_boxes for item in sublist]
 	
-	#hot_boxes = search(windows_S, boxscale=1)
+	"""
+	#Function successive calls without multiprocessing
+	hot_boxes = search(windows_S, boxscale=1)
 	#hot_boxes = search(windows_M, boxscale=1.5)
 	#hot_boxes = search(windows_L, boxscale=2)
+	"""
 	
 	t_end = time.time()
 	print(round(t_end-t_start, 2), 'Seconds to determine hot boxes...')
+	
 
-
-	heatmap = np.zeros_like(img)	
+	heatmap = np.zeros_like(img)
 	heatmap = add_heat(heatmap, hot_boxes)
 	
 	pipeline.buffer.appendleft(heatmap)
 	heatmap = sum(pipeline.buffer)
 	print('Absolute maximum value of heatmap:', heatmap.max())
-	pipeline.heatmap = apply_threshold(heatmap, 0)
+	pipeline.heatmap = apply_threshold(heatmap, 50)
 
 	# Draw and count labeled boxes here:
 	pipeline.labels = label(pipeline.heatmap)
@@ -124,7 +140,9 @@ def imageProcessing(image, svc, X_scaler):
 	width = 3
 		
 	image = mpimg.imread('test_images/test1.jpg')
-
+	# Might need to scale the image because mpimg scales jpegs from 0 to 255 in contrast to pngs (0 to 1)!
+	# The latter were used as training base for the SVM.
+	
 	result = pipeline(image, svc, X_scaler)
 
 	print(pipeline.labels[1], ' cars found.')
@@ -136,7 +154,7 @@ def imageProcessing(image, svc, X_scaler):
 	#plt.subplot(height,width,2)
 	#plt.title('Heatmap')
 	#plt.imshow(pipeline.buffer[0])
-	#plt.imsave('./output/heatmap.png', pipeline.buffer[0])
+	plt.imsave('./output_images/heatmap.png', pipeline.buffer[0])
 
 	plt.subplot(height,width,2)
 	plt.title('Large-sized Boxes')
@@ -157,6 +175,7 @@ def imageProcessing(image, svc, X_scaler):
 	plt.title('Resulting Image')
 	plt.imshow(result)
 	#plt.imsave('./output/resulting_image.png', result)
+	image_saver(result)
 
 	plt.tight_layout()
 
@@ -168,47 +187,55 @@ def imageProcessing(image, svc, X_scaler):
 
 # Use the pipeline to compile a video.
 def videoProcessing(clip, svc, X_scaler):
-	clip = VideoFileClip('./test_videos/project_video.mp4')#.subclip(5,10)
-	output_handle = './output/bboxes.mp4'
+	clip = VideoFileClip('./test_videos/project_video.mp4')#.subclip(5,15)
 	output_stream = clip.fl_image(lambda frame: pipeline(frame, svc, X_scaler))
-	output_stream.write_videofile(output_handle, audio=False)
+	video_saver(output_stream)
 	sys.exit()
 
 
-
 def usage():
-	pass
+	print('Usage:')
+	print('python main.py')
+	print('python main.py -v [<input_image.jpg>]')
+	print('python main.py --Video <input_video.mp4>')
+	print('python main.py -i [<input_image.jpg>]')
+	print('python main.py --Image <input_image.mp4>')
 
 
 
 def main(argv):
+
+	"""
 	# Only using the small set. 
 	# Could be an idea to implement the option to use the larger set via a command line option.
-	
-	"""
-	imglist = [	'./vehicles/GTI_Far/*.png',
-				'./vehicles/GTI_Left/*.png',
-				'./vehicles/GTI_MiddleClose/*.png',
-				'./vehicles/GTI_Right/*.png',
-				'./vehicles/KITTI_extracted/*.png',
-				'./non-vehicles/Extras/*.png',
-				'./non-vehicles/GTI/*.png']
-	"""				
+
 	images = glob.glob('./vehicles_smallset/cars[1-3]/*.jpeg') + glob.glob('./non-vehicles_smallset/notcars[1-3]/*.jpeg')
-	#images = glob.glob('./vehicles/*/*.png') + glob.glob('./non-vehicles/*/*.png')
 
 	cars = []
 	notcars = []
-
+	
 	for image in images:
 		if 'image' in image or 'extra' in image:
 			notcars.append(image)
 		else:
 			cars.append(image)
 
-
 	car_features = extract_features(cars)
 	notcar_features = extract_features(notcars)
+	"""
+	
+	car_images = glob.glob('./vehicles/*/*.png')
+	notcar_images = glob.glob('./non-vehicles/*/*.png')
+
+
+	print('Extracting car features...')
+	car_features = extract_features(car_images)
+	print('Extracting non-car features...')
+	notcar_features = extract_features(notcar_images)
+
+	#
+	#	Feature missing: rescaling of PNGs
+	#
 
 	# Preprocessing
 	X = np.vstack((car_features, notcar_features)).astype(np.float64)
@@ -223,16 +250,27 @@ def main(argv):
 
 	print('Using:', settings.orient, 'orientations, ', settings.pix_per_cell, 'pixels per cell, and', settings.cell_per_block,'cells per block')
 	print('Feature vector length:', len(X_train[0]))
- 
+	 
 	# We first train a HOG classifier.  We are doing this on-the-fly, without saving the results.
 	# After we have trained it, we can use the classifier by applying the sliding window search.
 	# This is done in the pipeline.
 
+	
 	svc = LinearSVC()
+	
+	with open('my_classifier.pkl', 'rb') as file_handle:
+		svc = pickle.load(file_handle)
+
+	"""
+	print('Start training the classifier...')
 	t_start = time.time()
 	svc.fit(X_train, y_train)
 	t_end = time.time()
-	print(round(t_start-t_end, 2), 'Seconds to train SVC...')
+	print('It took', round(t_end-t_start, 2), 'seconds to train the SVC...')
+	
+	with open('my_classifier.pkl', 'wb') as file_handle:
+		pickle.dump(svc, file_handle)
+	"""
 	print('Test Accuracy of SVC = ', round(svc.score(X_test, y_test), 4))
 
 

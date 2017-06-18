@@ -6,6 +6,9 @@ import PIL
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 
+###############################
+# Import configuration module #
+###############################
 from settings import settings
 
 
