@@ -95,7 +95,7 @@ def pipeline(img, clf, scaler):
 	pipeline.window_M_img = draw_boxes(img, windows_M, color=(0,255,0), thick=3)
 	pipeline.window_S_img = draw_boxes(img, windows_S, color=(255,0,0), thick=3)
 
-	# We need to apply matching algorithm here:
+	# We need to apply the matching algorithm here:
 	hot_boxes = []
 	search = partial(extract_search_window_features, img, clf=clf, scaler=scaler)
 	
@@ -105,6 +105,7 @@ def pipeline(img, clf, scaler):
 	pool.close()
 	hot_boxes = [item for sublist in hot_boxes for item in sublist]
 	
+
 	"""
 	#Function successive calls without multiprocessing
 	hot_boxes = search(windows_S, boxscale=1)
@@ -126,7 +127,7 @@ def pipeline(img, clf, scaler):
 
 	# Draw and count labeled boxes here:
 	pipeline.labels = label(pipeline.heatmap)
-	return draw_labeled_boxes(img, pipeline.labels)
+	return draw_labeled_boxes(pipeline.heatmap, pipeline.labels)
 
 pipeline.flag = 0
 
@@ -149,30 +150,31 @@ def imageProcessing(image, svc, X_scaler):
 	plt.imshow(image)
 	plt.title('Original Input Image')
 	
-	#plt.subplot(height,width,2)
-	#plt.title('Heatmap')
-	#plt.imshow(pipeline.buffer[0])
-	plt.imsave('./output_images/heatmap.png', pipeline.buffer[0])
+	plt.subplot(height,width,5)
+	plt.title('Heatmap')
+	heatmap_scaled = pipeline.buffer[0]*10
+	plt.imshow(heatmap_scaled)
+	plt.imsave('./images/heatmap1.png', heatmap_scaled)
 
 	plt.subplot(height,width,2)
 	plt.title('Large-sized Boxes')
 	plt.imshow(pipeline.window_L_img)
-	#plt.imsave('./output/large_boxes.png', pipeline.window_L_img)
+	#plt.imsave('./images/large_boxes.png', pipeline.window_L_img)
 
 	plt.subplot(height,width,3)
 	plt.title('Medium-sized Boxes')
 	plt.imshow(pipeline.window_M_img)
-	#plt.imsave('./output/medium_boxes.png', pipeline.window_M_img)
+	#plt.imsave('./images/medium_boxes.png', pipeline.window_M_img)
 
 	plt.subplot(height,width,4)
 	plt.title('Small-sized Boxes')
 	plt.imshow(pipeline.window_S_img)
-	#plt.imsave('./output/small_boxes.png', pipeline.window_S_img)
+	#plt.imsave('./images/small_boxes.png', pipeline.window_S_img)
 
 	plt.subplot(height,width,6)
 	plt.title('Resulting Image')
 	plt.imshow(result)
-	#plt.imsave('./output/resulting_image.png', result)
+	plt.imsave('./images/resulting_image1.png', result)
 	image_saver(result)
 
 	plt.tight_layout()
@@ -201,57 +203,6 @@ def usage():
 
 def init(argv):
 
-	"""
-	# Only using the small set. 
-	# Could be an idea to implement the option to use the larger set via a command line option.
-
-	images = glob.glob('./vehicles_smallset/cars[1-3]/*.jpeg') + glob.glob('./non-vehicles_smallset/notcars[1-3]/*.jpeg')
-
-	cars = []
-	notcars = []
-	
-	for image in images:
-		if 'image' in image or 'extra' in image:
-			notcars.append(image)
-		else:
-			cars.append(image)
-
-	car_features = extract_features(cars)
-	notcar_features = extract_features(notcars)
-	"""
-	"""
-	car_images = glob.glob('./vehicles/*/*.png')
-	notcar_images = glob.glob('./non-vehicles/*/*.png')
-
-
-	print('Extracting car features...')
-	car_features = extract_features(car_images)
-	print('Extracting non-car features...')
-	notcar_features = extract_features(notcar_images)
-
-	#
-	#	Feature missing: rescaling of PNGs
-	#
-
-	# Preprocessing
-	X = np.vstack((car_features, notcar_features)).astype(np.float64)
-
-	init.X_scaler = StandardScaler().fit(X)
-	scaled_X = init.X_scaler.transform(X)
-	y = np.hstack((np.ones(len(car_features)), np.zeros(len(notcar_features))))
-
-
-	rand_state = np.random.randint(0, 100)
-	X_train, X_test, y_train, y_test = train_test_split(scaled_X, y, test_size=0.2, random_state=rand_state)
-
-	print('Using:', settings.orient, 'orientations, ', settings.pix_per_cell, 'pixels per cell, and', settings.cell_per_block,'cells per block')
-	print('Feature vector length:', len(X_train[0]))
-	"""
-	# We first train a HOG classifier.  We are doing this on-the-fly, without saving the results.
-	# After we have trained it, we can use the classifier by applying the sliding window search.
-	# This is done in the pipeline.
-
-	
 	init.svc = LinearSVC()
 	
 	with open('classifier.pkl', 'rb') as file_handle:
@@ -262,21 +213,6 @@ def init(argv):
 	with open('scaler.pkl', 'rb') as file_handle:
 		init.X_scaler = pickle.load(file_handle)
 
-	"""
-	print('Start training the classifier...')
-	t_start = time.time()
-	svc.fit(X_train, y_train)
-	t_end = time.time()
-	print('It took', round(t_end-t_start, 2), 'seconds to train the SVC...')
-	
-	with open('my_classifier.pkl', 'wb') as file_handle:
-		pickle.dump(svc, file_handle)
-	
-	with open('scaler.pkl', 'wb') as file_handle:
-		pickle.dump(init.X_scaler, file_handle)
-	
-	print('Test Accuracy of SVC = ', round(init.svc.score(X_test, y_test), 4))
-	"""
 	return
 
 
@@ -296,7 +232,6 @@ if __name__=='__main__':
 
 	for opt, arg in opts:
 		if opt in ('-i', '--Image'):
-			#print('Option: ' + '\'' + arg + '\'')
 			init(sys.argv[1:])
 			imageProcessing(arg, init.svc, init.X_scaler)
 			

@@ -18,7 +18,7 @@ detections frame by frame to reject outliers and follow detected vehicles.
 
 ## Functionality of the Program
 
-The saved classifier will be saved as `./my_classifier.pkl` by default in order to avoid training it every time during intensive periods of testing.  Saving the linear classifier has been enabled through the ` module`.
+The saved classifier will be saved as `./classifier.pkl` (large training set) or as `./classifier_smallset.plk` (small training set).  Analogously, the scaler will be saved as `./scaler.pkl` or `./scaler_smallset.pkl`, respectively.  By default in order to avoid training it every time during intensive periods of testing.  Saving the linear classifier has been enabled through the ` module`.
 Additional options are training the classifier with either the small set or the large set.
 
 ```
@@ -31,9 +31,7 @@ main.py, sliding_windows.py, classify.py, saver.py, settings.py
 Usage:
 	python main.py
 	python main.py -v [<input_image.jpg>]
-	python main.py --Video <input_video.mp4>
 	python main.py -i [<input_image.jpg>]
-	python main.py --Image <input_image.mp4>
 ```
 
 #### Pure Image Analysis
@@ -153,27 +151,29 @@ The pipeline is structured as follows:
 
 Ultimately I searched on two scales using YCrCb 3-channel HOG features plus spatially binned color and histograms of color in the feature vector, which provided a nice result.  Here are some example images:
 
-<img src="./resulting_image1.png" width="300">
+<img src="./images/resulting_image1.png" width="600">
 
-The corresponding heatmap:
+The corresponding heatmap (amplified x10):
 
-<img src="./images/heatmap1.png" width="300">
+<img src="./images/heatmap1.png" width="600">
 
-The second test image, `test2.jpg`, did not result in any detection at all.
+The second test image, `test2.jpg`, did not result in any detection at all:<br>
+<img src="./images/resulting_image2.png" width="300">
+<img src="./images/heatmap2.png" width="300">
 
-Applying `test3.jpg` to the pipeline:
+Applying `test3.jpg` to the pipeline:<br>
 <img src="./images/resulting_image3.png" width="300">
 <img src="./images/heatmap3.png" width="300">
 
-Applying `test4.jpg` to the pipeline:
+Applying `test4.jpg` to the pipeline:<br>
 <img src="./images/resulting_image4.png" width="300">
 <img src="./images/heatmap4.png" width="300">
 
-Applying `test5.jpg` to the pipeline:
+Applying `test5.jpg` to the pipeline:<br>
 <img src="./images/resulting_image5.png" width="300">
 <img src="./images/heatmap5.png" width="300">
 
-Applying `test6.jpg` to the pipeline:
+Applying `test6.jpg` to the pipeline:<br>
 <img src="./images/resulting_image6.png" width="300">
 <img src="./images/heatmap6.png" width="300">
 
