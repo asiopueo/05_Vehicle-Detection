@@ -242,7 +242,6 @@ Here the resulting bounding boxes are drawn onto the last frame in the series:
 <img src="./images/resulting_image.png" width="600">
 
 The labels can be read out by `labels[1]` which gived us the
-Zt6$&79
 
 
 

@@ -65,13 +65,14 @@ def extract_hog_features(img):
 
 
 
+
 # Probleme mit x<->y beachten!
 def subsample_hog_features(global_hog_feats, window):
 	((sx, sy), (ex, ey)) = window
 	cell_start_x = sx // settings.pix_per_cell
-	cell_end_x = ex // settings.pix_per_cell-1
+	cell_end_x = ex // settings.pix_per_cell - 1
 	cell_start_y = sy // settings.pix_per_cell 
-	cell_end_y = ey // settings.pix_per_cell-1
+	cell_end_y = ey // settings.pix_per_cell - 1
 
 	if settings.hog_channel == 'ALL':
 		hog_features = []

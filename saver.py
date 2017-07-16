@@ -1,6 +1,10 @@
 import os
 import matplotlib.pyplot as plt
 #import pickle
+from settings import settings
+
+
+
 
 
 def image_saver(img, filename='bboxes', directory='./output_images'):
@@ -17,9 +21,11 @@ def image_saver(img, filename='bboxes', directory='./output_images'):
 		
 	cntr_str = str(cntr).zfill(2)
 	output_handle = directory + '/' + filename + '_' + cntr_str + '.png'
-	
 	plt.imsave(output_handle, img)
 
+	settings.save(directory + '/' + filename + '_' + cntr_str + '.log')
+	#settings.load(directory + '/' + filename + '_' + cntr_str + '.log')
+	#settings.print()
 	return
 	
 
@@ -39,8 +45,9 @@ def video_saver(stream, filename='bboxes', directory='./output_videos'):
 		
 	cntr_str = str(cntr).zfill(2)
 	output_handle = directory + '/' + filename + '_' + cntr_str + '.mp4'
-	
 	stream.write_videofile(output_handle, audio=False)
+	
+	settings.save(directory + '/' + filename + '_' + cntr_str + '.log')
 
 	return
 
