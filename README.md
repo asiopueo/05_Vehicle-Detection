@@ -18,11 +18,22 @@ detections frame by frame to reject outliers and follow detected vehicles.
 
 ## Functionality of the Program
 
-The saved classifier will be saved as `./classifier.pkl` (large training set) or as `./classifier_smallset.plk` (small training set).  Analogously, the scaler will be saved as `./scaler.pkl` or `./scaler_smallset.pkl`, respectively.  By default in order to avoid training it every time during intensive periods of testing.  Saving the linear classifier has been enabled through the ` module`.
+This program uses Pickle in order to save the trained classifier and scaler.  Depending on the training set, the classifier will be saved as `./classifier.pkl` (large training set) or as `./classifier_smallset.pkl` (small training set).  Analogously, the scaler will be saved as `./scaler.pkl` or `./scaler_smallset.pkl`, respectively.  By default in order to avoid training it every time during intensive periods of testing.  Saving the linear classifier has been enabled through the ` module`.
 Additional options are training the classifier with either the small set or the large set.
 
 ```
-main.py, sliding_windows.py, classify.py, saver.py, settings.py
+classifier.pkl
+classifier_smallset.pkl
+scaler.pkl
+scaler_smallset.pkl
+```
+
+```
+main.py
+sliding_windows.py
+classify.py
+saver.py
+settings.py
 ```
 
 
@@ -34,7 +45,7 @@ Usage:
 	python main.py -i [<input_image.jpg>]
 ```
 
-#### Pure Image Analysis
+#### Analysis of Single Images
 ```
 > python main.py -i test_image.jpg
 ```
@@ -126,20 +137,16 @@ During the final stages of this project, I switched to the larger data set and i
 
 #### 1. Describe how (and identify where in your code) you implemented a sliding window search.  How did you decide what scales to search and how much to overlap windows?
 
-I decided to use three scales: 64x64px, 128x128px, and 256x256px.
+I decided to use three scales: **64x64px, 128x128px, and 256x256px**.
+The smallest scale is used in a ribbon at the horizon which is located between 336 px and 592 px.
+The medium scale is located in a ribbon between 336 px and 592 px.
+And finally, the largest scale is located in a ribbon between 336 px and 592 px:
 
-The smallest scale is used in a ribbon at the horizon which is located between and ??.
-
-The medium scale is located in a ribbon between and .
-
-And finally, the largest scale is located in a ribbon between ?? and ?? px.
-
-| Class  			| Upper Boundary		| Lower Boundary			|
-|:-----------:|:-----------------:|:-------------------:|
-|	Small				|					px				|					px					|
-|	Medium			|					px				|					px					|
-|	Large				|					px				|					px					|
-
+| Class  			|     Upper Boundary		|     Lower Boundary			|
+|:-----------:|:---------------------:|:-----------------------:|
+|	Small				|					592 px				|					336 px					|
+|	Medium			|					592 px				|					336 px					|
+|	Large				|					592 px				|					336 px					|
 
 
 Small-sized boxes:<br>
@@ -151,10 +158,7 @@ Medium-sized boxes:<br>
 Large-sized boxes:<br>
 <img src="./images/large_boxes.png" width="400">
 
-
-
 Using the 'functions are also objects' in Python, I can easily read them out for tweaking purposes in the `imageProcessing()` function.
-
 
 
 
@@ -163,13 +167,18 @@ Using the 'functions are also objects' in Python, I can easily read them out for
 
 The pipeline is structured as follows:
 
-Ultimately I searched on two scales using YCrCb 3-channel HOG features plus spatially binned color and histograms of color in the feature vector, which provided a nice result.  Here are some example images:
+I searched on scales using **RGB 3-channel** HOG features plus spatially binned color and histograms of color in the feature vector, which provided a nice result.  
+
+**Here are some example images:**
 
 <img src="./images/resulting_image1.png" width="600">
 
-The corresponding heatmap (amplified x10):
+**The same heatmap but amplified by a factor of 10:**
 
 <img src="./images/heatmap1.png" width="600">
+
+The amplification in the previous image was necessary since the pipeline was optimized for video processing and temporal averaging, i.e. accumulating heat images over several video frames.  If only one single image is considered, the grey values are rather low and therefore hard to detect on a scale from 0 to 255.
+
 
 The second test image, `test2.jpg`, did not result in any detection at all:<br>
 <img src="./images/resulting_image2.png" width="300">
@@ -222,28 +231,9 @@ One can see that our method for detecting false peresting feature to stabilize t
 
 #### 2. Describe how (and identify where in your code) you implemented some kind of filter for false positives and some method for combining overlapping bounding boxes.
 
-I recorded the positions of positive detections in each frame of the video.  From the positive detections I created a heatmap and then thresholded that map to identify vehicle positions.  I then used `scipy.ndimage.measurements.label()` to identify individual blobs in the heatmap.  I then assumed each blob corresponded to a vehicle.  I constructed bounding boxes to cover the area of each blob detected.  
+I recorded the positions of positive detections in each frame of the video.  From the positive detections I created a heatmap and added the heat of the most recent XX frames (**temporal averaging**).  I then thresholded this map to identify vehicle positions.  Using `scipy.ndimage.measurements.label()` to identify individual blobs in the heatmap, I assumed that each blob corresponds to a vehicle.  In a subsequent step, I constructed bounding boxes to cover the area of each blob detected.  
 
-Here's an example result showing the heatmap from a series of frames of video, the result of `scipy.ndimage.measurements.label()` and the bounding boxes then overlaid on the last frame of video:
-
-
-
-The following two pictures illustrate the application of the pipeline onto `test1.jpg`, but without any threshold:
-
-<img src="./images/heatmap.png" width="600">
-
-Applying the corresponding bounding boxes:
-
-Here is the output of `scipy.ndimage.measurements.label()` on the integrated heatmap from all six frames:
-
-
-Here the resulting bounding boxes are drawn onto the last frame in the series:
-
-<img src="./images/resulting_image.png" width="600">
-
-The labels can be read out by `labels[1]` which gived us the
-
-
+Here is an example result showing the heatmap from a series of frames of video, the result of `scipy.ndimage.measurements.label()` and the bounding boxes then overlaid on the last frame of video:
 
 
 
@@ -257,19 +247,15 @@ Here I'll talk about the approach I took, what techniques I used, what worked an
 
 Further improvements should focus on making the algorithm more efficient, i.e. make it more likely to being used for real-time applications.  In its current state, the pipeline is much too slow, in particular due to inefficient use of the sliding window technique.
 
-While experimenting with different parameters and subroutines, I've learned that the `add_heat()`-function does consume a lot time.  At first, I have forgotten to add the small windows to the heatmap, but after I have corrected this mistake, the compilation of videos had become much slower.
+While experimenting with different parameters and subroutines, I've learned that the `add_heat()`-function does consume a lot of time.  At first, I have forgotten to add the small windows to the heatmap, but after I have corrected this mistake, the compilation of videos had become much slower.
 
-
-One interesting feature to stabilize the tracking algorithm could be the use of **temporal averaging**.  This would require the use of a buffer for a few frames.  Especially real-time usages would require very fast algorithms due to
-
+Especially real-time usages would require very fast algorithms due to
 
 I found the solution from the lectures rather unsatisfying, as there are too many arguments in the function.  This has certainly much to do with
 
 One huge problem is speed the compilation time up.  The goal is of course to attain almost real-time performance, i.e. as many frames per seconds and as little latency as possible.
 
-**Multiprocessing.**  I have incorporated the Python Multiprocessing module by starting one process for each window size.  
-
-```import multiprocessing```
+**Multiprocessing.**  I have incorporated the Python Multiprocessing module by starting one process for each window size: `import multiprocessing`.
 
 The average computation time per frame when utilizing Multiprocessing is 2.1 seconds, whereas without Multiprocessing results in 2.8 seconds.  I.e. a time saving of %.
 
@@ -282,11 +268,12 @@ These results are definitely too slow for real-time applications.
 
 There are several methods to speed the computation time up.  First of all, the regions within each window size is scanned could be opitimized, as the saved computational time is directly proportional to the number of analyzed windows.
 
-For example, once a car has been detected and determined positively, a *tracking* algorithm should take over.  This tracking algorithm should only search for a new position of the car around the previous position.  For example, instead of a sliding window, the search windows could be scattered randomly (normally distributed) around the previous position of the car (for a more sophisticated algorithm around the new estimated position).  
+For example, once a car has been detected and determined positive, a *tracking* algorithm should take over.  This tracking algorithm should only search for a new position of the car in a neighborhood around the previous position.  For example, instead of a sliding window, the search windows could be scattered randomly (e.g., normally distributed) around the previous position of the car.  The next step towards a more sophisticated algorithm should incorporate an estimate of the current position of the target vehicle.  
 
-Lastly, I can not rule out the possibility for a better way of parallization.  
+For example, a general detection algorithm could then alternate between two states: A tracking state and a detection state.
 
-The general detection algorithm could then be only initiated every ten frames in order to save computational time.
+Finally, I cannot rule out the possibility of a better way of realizing parallelization in my current work.  Perhaps it would be more advantageous to let different processes analyze different windows of the same size at the same time.  Experimental work should be performed to demonstrate the superiority of one method over the other.
 
+One comment on my code: Although I was able to make some improvements architecturally, there is still plenty of room for cleanup and streamlining.  One step I've taken is to introduce a special class called `Settings` and use the corresponding object to enforce the settings globally.  I believe that this style is permissible but also more in the spirit of Python rather than a C-family language.
 
-Although I was able to make some improvements architectually, there is still plenty of room for cleanup and .  In particular, I the parameter object `settings` should not be passed as often from function to function.  This would require only a few hours of optimization.  However, this work will be postponed until later.
+I've also added some functionality in order to simplify the organization of the resulting images and videos: The output files are enumerated by a suffix with increasing order, and additionally, a log file with the same suffix is created in order to log the corresponding settings.
